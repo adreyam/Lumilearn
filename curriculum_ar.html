@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>البرنامج الدراسي - LumiLearn</title>
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', 'Poppins', sans-serif; }
+    .curriculum-hero {
+      background: linear-gradient(135deg, #FFE5F1 0%, #E0F7FF 100%);
+      padding: 60px 5%;
+      text-align: center;
+    }
+    .curriculum-hero h2 { font-size: 2.5em; color: var(--color-primary); margin-bottom: 15px; font-weight: 800; }
+    .curriculum-hero p { font-size: 1.2em; color: var(--color-text); max-width: 800px; margin: 0 auto; }
+    .curriculum-container { max-width: 1200px; margin: 0 auto; padding: 60px 5%; }
+    .grade-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 50px; }
+    .grade-tab {
+      background: white;
+      border: 3px solid var(--color-primary);
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1em;
+      color: var(--color-text);
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      font-family: 'Tajawal', sans-serif;
+    }
+    .grade-tab:hover { background: var(--color-primary); color: white; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .grade-tab.active { background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; transform: scale(1.05); }
+    .grade-content { display: none; animation: fadeInUp 0.6s ease-out; }
+    .grade-content.active { display: block; }
+    .grade-header { text-align: center; margin-bottom: 40px; }
+    .grade-header h3 { font-size: 2em; color: var(--color-primary); margin-bottom: 10px; font-weight: 800; }
+    .grade-header p { font-size: 1.1em; color: #666; }
+    .subjects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
+    .subject-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+      direction: rtl;
+    }
+    .subject-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-color: var(--color-primary); }
+    .subject-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .subject-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 2em; flex-shrink: 0; }
+    .subject-icon.math { background: linear-gradient(135deg, #FFD36E, #FFA500); }
+    .subject-icon.language { background: linear-gradient(135deg, #FF91AF, #FF6B9D); }
+    .subject-icon.science { background: linear-gradient(135deg, #6ED3CF, #4ECDC4); }
+    .subject-icon.french { background: linear-gradient(135deg, #B99BFF, #9B7FE8); }
+    .subject-icon.history { background: linear-gradient(135deg, #A8E6CF, #74C365); }
+    .subject-icon.islamic { background: linear-gradient(135deg, #FFE5B4, #FFD700); }
+    .subject-icon.civic { background: linear-gradient(135deg, #FFB6C1, #FF69B4); }
+    .subject-icon.geography { background: linear-gradient(135deg, #87CEEB, #4682B4); }
+    .subject-title h4 { font-size: 1.5em; color: var(--color-text); margin-bottom: 5px; font-weight: 700; }
+    .topic-count { color: #888; font-size: 0.9em; }
+    .topics-list { list-style: none; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease; opacity: 0; }
+    .subject-card.expanded .topics-list { max-height: 500px; opacity: 1; margin-top: 15px; }
+    .topics-list li {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFF8F0, #FFE5F1);
+      border-radius: 10px;
+      border-right: 4px solid var(--color-primary);
+      font-size: 0.95em;
+      transition: all 0.2s ease;
+    }
+    .topics-list li:hover { background: linear-gradient(135deg, #FFE5F1, #E0F7FF); transform: translateX(-5px); }
+    .expand-icon { float: left; transition: transform 0.3s ease; color: var(--color-primary); font-size: 1.5em; font-weight: bold; }
+    .subject-card.expanded .expand-icon { transform: rotate(45deg); }
+    @media (max-width: 768px) {
+      .curriculum-hero h2 { font-size: 1.8em; }
+      .grade-tab { padding: 12px 20px; font-size: 1em; }
+      .subjects-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+      <a href="audio_ar.html">🎧 كتب صوتية</a>
+      <a href="articles_ar.html">📚 مقالات</a>
+      <a href="curriculum_ar.html">🎓 البرنامج</a>
+      <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+      <a href="favoris_ar.html">❤️ المفضلة</a>
+      <a href="quiz_ar.html">🧠 اختبارات</a>
+      <a href="jeux_ar.html">🎮 ألعاب تعليمية</a>
+      <a href="apropos_ar.html">💡 من نحن</a>
+      <a href="contact_ar.html">📩 تواصل معنا</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+      <select id="langSelect" class="lang-select">
+        <option value="ar" selected>🇸🇦 AR</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+    </nav>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+    <a href="audio_ar.html">🎧 كتب صوتية</a>
+    <a href="articles_ar.html">📚 مقالات</a>
+    <a href="curriculum_ar.html">🎓 البرنامج</a>
+    <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+    <a href="favoris_ar.html">❤️ المفضلة</a>
+    <a href="quiz_ar.html">🧠 اختبارات</a>
+    <a href="jeux_ar.html">🎮 ألعاب تعليمية</a>
+    <a href="apropos_ar.html">💡 من نحن</a>
+    <a href="contact_ar.html">📩 تواصل معنا</a>
+    <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="ar" selected>العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </nav>
+
+  <section class="curriculum-hero">
+    <h2>البرنامج الدراسي 🎓</h2>
+    <p>اعثر على دروسك المرتبة حسب المستوى والمادة</p>
+  </section>
+
+  <div class="curriculum-container">
+    <div class="grade-tabs">
+      <button class="grade-tab active" data-grade="1">السنة 1️⃣</button>
+      <button class="grade-tab" data-grade="2">السنة 2️⃣</button>
+      <button class="grade-tab" data-grade="3">السنة 3️⃣</button>
+      <button class="grade-tab" data-grade="4">السنة 4️⃣</button>
+      <button class="grade-tab" data-grade="5">السنة 5️⃣</button>
+      <button class="grade-tab" data-grade="6">السنة 6️⃣</button>
+    </div>
+
+    <!-- السنة 1 -->
+    <div class="grade-content active" data-grade="1">
+      <div class="grade-header">
+        <h3>برنامج السنة الأولى 📚</h3>
+        <p>اكتشف عالم المعرفة بخطواتك الأولى!</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">5 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 الأعداد من 1 إلى 10</li>
+            <li>➕ الجمع البسيط</li>
+            <li>➖ الطرح البسيط</li>
+            <li>🔷 الأشكال الهندسية</li>
+            <li>📏 القياس الأولي</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title"><h4>اللغة العربية</h4><p class="topic-count">5 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📝 تعلم الحروف الهجائية</li>
+            <li>📚 القراءة الأولى</li>
+            <li>✍️ الكتابة والخط</li>
+            <li>🗣️ التعبير الشفوي</li>
+            <li>💬 المفردات البسيطة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🌱</div>
+            <div class="subject-title"><h4>التربية العلمية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🌿 عالم النباتات</li>
+            <li>🐾 عالم الحيوانات</li>
+            <li>☀️ الطبيعة والفصول</li>
+            <li>🧴 النظافة والصحة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon islamic">📿</div>
+            <div class="subject-title"><h4>التربية الإسلامية</h4><p class="topic-count">3 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 سور قرآنية قصيرة</li>
+            <li>🤲 الدعاء اليومي</li>
+            <li>🕌 أركان الإسلام</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- السنة 2 -->
+    <div class="grade-content" data-grade="2">
+      <div class="grade-header">
+        <h3>برنامج السنة الثانية 📚</h3>
+        <p>وسّع معارفك واستكشف آفاقاً جديدة!</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">6 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 الأعداد حتى 100</li>
+            <li>➕ الجمع بالاحتفاظ</li>
+            <li>➖ الطرح بالاقتراض</li>
+            <li>✖️ بداية الضرب</li>
+            <li>🔷 الأشكال والحجوم</li>
+            <li>⏰ قراءة الساعة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title"><h4>اللغة العربية</h4><p class="topic-count">5 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 قراءة النصوص القصيرة</li>
+            <li>✍️ الإملاء البسيط</li>
+            <li>📝 النحو الأساسي</li>
+            <li>🗣️ التعبير الكتابي</li>
+            <li>💭 الثروة اللغوية</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title"><h4>اللغة الفرنسية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 الحروف والأصوات</li>
+            <li>🗣️ الكلمات الأساسية</li>
+            <li>📝 جمل بسيطة</li>
+            <li>💬 التواصل الشفوي</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title"><h4>التربية العلمية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🌱 نمو النباتات</li>
+            <li>💧 الماء في حياتنا</li>
+            <li>🌤️ الطقس والمناخ</li>
+            <li>♻️ البيئة والحفاظ عليها</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- السنة 3 -->
+    <div class="grade-content" data-grade="3">
+      <div class="grade-header">
+        <h3>برنامج السنة الثالثة 📚</h3>
+        <p>عمّق فهمك وطوّر مهاراتك!</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">7 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 الأعداد الكبيرة</li>
+            <li>✖️ جداول الضرب</li>
+            <li>➗ مقدمة في القسمة</li>
+            <li>🔷 الهندسة: الخطوط والزوايا</li>
+            <li>📊 المسائل الرياضية</li>
+            <li>💰 العملات النقدية</li>
+            <li>📏 المحيط والمساحة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title"><h4>اللغة العربية</h4><p class="topic-count">6 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 نصوص أدبية</li>
+            <li>✍️ التعبير الكتابي</li>
+            <li>📖 القراءة المعبّرة</li>
+            <li>📝 الصرف والنحو</li>
+            <li>🎭 تحليل النصوص</li>
+            <li>💭 المفردات الموضوعاتية</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title"><h4>العلوم</h4><p class="topic-count">5 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🌱 نمو النباتات</li>
+            <li>⚡ الطاقة</li>
+            <li>🧲 المغناطيسية</li>
+            <li>🦴 جسم الإنسان</li>
+            <li>🌍 الأرض والفضاء</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon islamic">📿</div>
+            <div class="subject-title"><h4>التربية الإسلامية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 سور من القرآن الكريم</li>
+            <li>🕌 أركان الإسلام</li>
+            <li>🤲 آداب الإسلام</li>
+            <li>📿 قصص الأنبياء</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- السنة 4 -->
+    <div class="grade-content" data-grade="4">
+      <div class="grade-header">
+        <h3>برنامج السنة الرابعة 📚</h3>
+        <p>وسّع آفاقك واستكشف مجالات جديدة!</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">8 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 الأعداد العشرية</li>
+            <li>✖️ ضرب بخانتين</li>
+            <li>➗ القسمة الإقليدية</li>
+            <li>📐 المثلثات والأضلاع</li>
+            <li>📊 الرسوم البيانية</li>
+            <li>➗ الكسور</li>
+            <li>📏 حساب المساحات</li>
+            <li>🔄 التناسب</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon history">🏛️</div>
+            <div class="subject-title"><h4>التاريخ</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏺 ما قبل التاريخ</li>
+            <li>🏛️ الحضارات القديمة</li>
+            <li>🕌 تاريخ تونس</li>
+            <li>⏳ قياس الزمن</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon geography">🗺️</div>
+            <div class="subject-title"><h4>الجغرافيا</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🗺️ الخرائط والمخططات</li>
+            <li>🇹🇳 تونس: الجهات</li>
+            <li>🌍 القارات والمحيطات</li>
+            <li>🏔️ التضاريس والمناظر</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title"><h4>العلوم</h4><p class="topic-count">6 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔬 المادة وحالاتها</li>
+            <li>⚡ الكهرباء</li>
+            <li>🌱 تغذية النباتات</li>
+            <li>🫀 الدورة الدموية</li>
+            <li>🌍 النظم البيئية</li>
+            <li>🌙 المجموعة الشمسية</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- السنة 5 -->
+    <div class="grade-content" data-grade="5">
+      <div class="grade-header">
+        <h3>برنامج السنة الخامسة 📚</h3>
+        <p>استعد للانتقال إلى المرحلة المتوسطة!</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">9 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 عمليات على الأعداد العشرية</li>
+            <li>➗ الكسور وعملياتها</li>
+            <li>📊 النسب المئوية</li>
+            <li>📐 المحيط والمساحة</li>
+            <li>📦 الحجم</li>
+            <li>🔄 السرعة والزمن</li>
+            <li>📈 التناسب المتقدم</li>
+            <li>🔷 التماثل</li>
+            <li>🧮 حل المسائل</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title"><h4>اللغة العربية</h4><p class="topic-count">6 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 نصوص متنوعة</li>
+            <li>✍️ الإنشاء والتعبير</li>
+            <li>📝 النحو المتقدم</li>
+            <li>🎭 دراسة الأدب</li>
+            <li>💭 الثروة اللغوية</li>
+            <li>📖 القراءة الناقدة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon history">🏛️</div>
+            <div class="subject-title"><h4>التاريخ والجغرافيا</h4><p class="topic-count">5 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏛️ الحضارة الإسلامية</li>
+            <li>🌍 جغرافيا إفريقيا</li>
+            <li>🇹🇳 تونس في العالم</li>
+            <li>🌐 العولمة</li>
+            <li>♻️ التنمية المستدامة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon islamic">📿</div>
+            <div class="subject-title"><h4>التربية الإسلامية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 حفظ وتفسير الآيات</li>
+            <li>📿 الفقه الإسلامي</li>
+            <li>🤲 الأخلاق الإسلامية</li>
+            <li>🕌 السيرة النبوية</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- السنة 6 -->
+    <div class="grade-content" data-grade="6">
+      <div class="grade-header">
+        <h3>برنامج السنة السادسة 📚</h3>
+        <p>التحضير لمتحان نهاية المرحلة الابتدائية</p>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title"><h4>الرياضيات</h4><p class="topic-count">10 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 الأعداد الصحيحة والعشرية</li>
+            <li>➗ القسمة المتقدمة</li>
+            <li>📐 الهندسة الفراغية</li>
+            <li>📊 الإحصاء البسيط</li>
+            <li>🔄 النسبة والتناسب</li>
+            <li>➗ الكسور المتقدمة</li>
+            <li>🔷 التحويلات الهندسية</li>
+            <li>⏱️ مسائل متنوعة</li>
+            <li>📏 القياس والحساب</li>
+            <li>🧮 مراجعة شاملة</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title"><h4>اللغة العربية</h4><p class="topic-count">7 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 النصوص الأدبية والشعرية</li>
+            <li>✍️ الإنشاء المتقدم</li>
+            <li>📝 الإعراب والتحليل</li>
+            <li>🎭 دراسة الأدب العربي</li>
+            <li>💭 الأساليب البلاغية</li>
+            <li>📖 القراءة الشاملة</li>
+            <li>🗣️ التعبير والتواصل</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title"><h4>العلوم والتكنولوجيا</h4><p class="topic-count">6 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🧬 الخلية والوراثة</li>
+            <li>⚡ الإلكترونيات الأساسية</li>
+            <li>🌡️ الحرارة والحرارة</li>
+            <li>🫁 الجهاز التنفسي</li>
+            <li>🌏 المشاكل البيئية</li>
+            <li>🚀 الفضاء والكون</li>
+          </ul>
+        </div>
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon civic">🏛️</div>
+            <div class="subject-title"><h4>التربية المدنية</h4><p class="topic-count">4 موضوعات</p></div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🇹🇳 المواطنة والانتماء الوطني</li>
+            <li>⚖️ حقوق وواجبات المواطن</li>
+            <li>🏛️ مؤسسات الدولة</li>
+            <li>🌍 التضامن والسلام</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>🌟 LumiLearn</h4>
+        <p>منصة تعليمية تساعد الأطفال على التعلم بطريقة ممتعة.</p>
+      </div>
+      <div class="footer-section">
+        <h4>خريطة الموقع</h4>
+        <ul>
+          <li><a href="indexSIGHT_ar.html">🏠 الرئيسية</a></li>
+          <li><a href="audio_ar.html">🎧 كتب صوتية</a></li>
+          <li><a href="articles_ar.html">📚 مقالات</a></li>
+          <li><a href="curriculum_ar.html">🎓 البرنامج</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>الموارد</h4>
+        <ul>
+          <li><a href="wikipedia_ar.html">🌐 ويكيبيديا</a></li>
+          <li><a href="quiz_ar.html">🧠 اختبارات</a></li>
+          <li><a href="apropos_ar.html">💡 من نحن</a></li>
+          <li><a href="contact_ar.html">📩 تواصل معنا</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>اللغات</h4>
+        <ul>
+          <li>🇸🇦 العربية</li>
+          <li>🇫🇷 الفرنسية</li>
+          <li>🇬🇧 الإنجليزية</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 LumiLearn | مشروع IEEE ENSIT CS × SIGHT Group 🌟</p>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    menuToggle.addEventListener('click', () => mobileNav.classList.toggle('is-open'));
+
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+    function changeLanguage(lang) {
+      if (lang === 'fr') window.location.href = 'curriculum.html';
+      else if (lang === 'en') window.location.href = 'curriculum_en.html';
+    }
+    langSelect.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelectMobile.value = e.target.value; });
+    langSelectMobile.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelect.value = e.target.value; });
+
+    // Grade tabs
+    document.querySelectorAll('.grade-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.grade-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelector(`.grade-content[data-grade="${this.dataset.grade}"]`).classList.add('active');
+      });
+    });
+
+    // Subject cards expand
+    document.querySelectorAll('.subject-card').forEach(card => {
+      card.addEventListener('click', function() {
+        this.classList.toggle('expanded');
+      });
+    });
+  </script>
+  <script src="auth.js"></script>
+</body>
+</html>

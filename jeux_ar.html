@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiLearn : الألعاب التعليمية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <style>
+    body {
+      font-family: 'Poppins', 'Cairo', sans-serif;
+    }
+    
+    /* Specific selection page styles matching Lumilearn design language */
+    .games-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 30px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 3px solid transparent;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: var(--color-primary);
+    }
+
+    .game-card.math::before {
+      background: var(--color-accent);
+    }
+
+    .game-card.memory::before {
+      background: var(--color-purple);
+    }
+
+    .game-card:hover {
+      transform: translateY(-15px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .game-card.math:hover {
+      border-color: var(--color-accent);
+    }
+
+    .game-card.memory:hover {
+      border-color: var(--color-purple);
+    }
+
+    .game-icon-wrapper {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--color-background);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      margin-bottom: 25px;
+      box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+
+    .game-card:hover .game-icon-wrapper {
+      transform: rotate(-10deg) scale(1.1);
+    }
+
+    .game-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-text);
+      margin-bottom: 15px;
+    }
+
+    .game-desc {
+      color: #666;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      flex-grow: 1;
+    }
+
+    .play-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      color: white;
+      font-weight: bold;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(255, 145, 175, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .game-card.math .play-btn {
+      background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
+      box-shadow: 0 5px 15px rgba(110, 211, 207, 0.3);
+    }
+
+    .game-card.memory .play-btn {
+      background: linear-gradient(135deg, var(--color-purple), var(--color-primary));
+      box-shadow: 0 5px 15px rgba(185, 155, 255, 0.3);
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* RTL specific selector tweaks */
+    .desktop-nav {
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body dir="rtl">
+  <!-- ============ Header ============ -->
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+
+    <!-- التنقّل في نسخة الحاسوب -->
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_ar.html">🏠 الصفحة الرئيسية</a>
+      <a href="audio_ar.html">🎧 كُتب صوتية</a>
+      <a href="articles_ar.html">📚 مقالات</a>
+      <a href="curriculum_ar.html">🎓 البرنامج</a>
+      <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+      <a href="quiz_ar.html">🧠 اختبارات</a>
+      <a href="jeux_ar.html" style="background-color: var(--color-secondary); color: #333;">🎮 ألعاب تعليمية</a>
+      <a href="apropos_ar.html">💡 على المنصّة</a>
+      <a href="contact_ar.html">📩 تواصل معنا</a>
+      <a href="login_ar.html" class="login-btn">👤 تسجيل الدخول</a>
+      
+      <!-- اختيار اللغة -->
+      <select id="langSelect" class="lang-select">
+        <option value="ar" selected>🇹🇳 AR</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+    </nav>
+
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <!-- ============ قائمة الهاتف ============ -->
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_ar.html">🏠 الصفحة الرئيسية</a>
+    <a href="audio_ar.html">🎧 كُتب صوتية</a>
+    <a href="articles_ar.html">📚 مقالات</a>
+    <a href="curriculum_ar.html">🎓 البرنامج</a>
+    <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+    <a href="quiz_ar.html">🧠 اختبارات</a>
+    <a href="jeux_ar.html" style="background-color: rgba(255,255,255,0.2);">🎮 ألعاب تعليمية</a>
+    <a href="apropos_ar.html">💡 على المنصّة</a>
+    <a href="contact_ar.html">📩 تواصل معنا</a>
+    <a href="login_ar.html" class="login-btn">👤 تسجيل الدخول</a>
+    <div class="lang-select-mobile">
+      🌍
+      <select id="langSelectMobile">
+        <option value="ar" selected>العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </nav>
+
+  <!-- ============ Hero Section ============ -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h2>العب وتعلّم في نفس الوقت! 🎮✨</h2>
+      <p>
+        اختر واحدة من ألعابنا التعليمية التفاعلية أدناه لاختبار مهاراتك وتحطيم رقمك القياسي!
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ Main Content ============ -->
+  <main class="container" style="background: none; padding-top: 20px;">
+    <div class="games-container">
+      <!-- Game 1: Math Puzzle -->
+      <div class="game-card math" onclick="window.location.href='jeux1_ar.html'">
+        <div class="game-icon-wrapper">🧮</div>
+        <h3 class="game-title">ألغاز الرياضيات</h3>
+        <p class="game-desc">
+          اجمع بين الأرقام والعمليات الحسابية للوصول إلى الرقم المستهدف! طريقة رائعة لتحدي وتطوير مهارات الحساب الذهني.
+        </p>
+        <a href="jeux1_ar.html" class="play-btn">العب الآن</a>
+      </div>
+
+      <!-- Game 2: Memory Matching -->
+      <div class="game-card memory" onclick="window.location.href='jeux2_ar.html'">
+        <div class="game-icon-wrapper">🧠</div>
+        <h3 class="game-title">الذاكرة التعليمية</h3>
+        <p class="game-desc">
+          مرّن ذاكرتك ومهاراتك المعرفية عبر مطابقة أزواج من البطاقات (عمليات حسابية أو حيوانات لطيفة)!
+        </p>
+        <a href="jeux2_ar.html" class="play-btn">العب الآن</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ Footer ============ -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>🌟 LumiLearn</h4>
+        <p>منصّة تعليمية تساعد الأطفال على التعلّم بطريقة ممتعة ومبسّطة 💡</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>خريطة الموقع</h4>
+        <ul>
+          <li><a href="indexSIGHT_ar.html">🏠 الرئيسية</a></li>
+          <li><a href="audio_ar.html">🎧 كُتب صوتية</a></li>
+          <li><a href="articles_ar.html">📚 مقالات</a></li>
+          <li><a href="curriculum_ar.html">🎓 البرنامج</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>الموارد</h4>
+        <ul>
+          <li><a href="wikipedia_ar.html">🌐 ويكيبيديا</a></li>
+          <li><a href="quiz_ar.html">🧠 اختبارات</a></li>
+          <li><a href="apropos_ar.html">💡 على المنصّة</a></li>
+          <li><a href="contact_ar.html">📩 تواصل معنا</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>اللغات</h4>
+        <ul>
+          <li>🇹🇳 العربية</li>
+          <li>🇫🇷 الفرنسية</li>
+          <li>🇬🇧 الإنجليزية</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2025 LumiLearn | مشروع IEEE ENSIT CS × SIGHT Group 🌟</p>
+    </div>
+  </footer>
+
+  <!-- ============ JavaScript ============ -->
+  <script>
+    // القائمة في الهاتف
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('is-open');
+    });
+
+    // اختيار اللغة مع تحويل الصفحات
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+
+    function changeLanguage(lang) {
+      switch(lang) {
+        case 'ar':
+          window.location.href = 'jeux_ar.html';
+          break;
+        case 'fr':
+          window.location.href = 'jeux_fr.html';
+          break;
+        case 'en':
+          window.location.href = 'jeux_en.html';
+          break;
+      }
+    }
+
+    langSelect.addEventListener('change', (e) => {
+      langSelectMobile.value = e.target.value;
+      changeLanguage(e.target.value);
+    });
+
+    langSelectMobile.addEventListener('change', (e) => {
+      langSelect.value = e.target.value;
+      changeLanguage(e.target.value);
+    });
+  </script>
+</body>
+</html>

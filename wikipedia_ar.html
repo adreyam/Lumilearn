@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiLearn : ويكيبيديا</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <style>
+    body { font-family: 'Tajawal', 'Poppins', sans-serif; }
+    .wiki-card p { color: #555; font-size: 0.95em; margin-bottom: 15px; line-height: 1.6; }
+    .wiki-card a {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .wiki-card a:hover { background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); transform: scale(1.05); }
+    .wiki-card { direction: rtl; text-align: right; }
+    @media (max-width: 850px) { .resources-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; } }
+    @media (max-width: 500px) { .resources-grid { grid-template-columns: 1fr; gap: 15px; } }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+      <a href="audio_ar.html">🎧 كتب صوتية</a>
+      <a href="articles_ar.html">📚 مقالات</a>
+      <a href="curriculum_ar.html">🎓 البرنامج</a>
+      <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+      <a href="favoris_ar.html">❤️ المفضلة</a>
+      <a href="quiz_ar.html">🧠 اختبارات</a>
+      <a href="jeux_ar.html">🎮 ألعاب تعليمية</a>
+      <a href="apropos_ar.html">💡 من نحن</a>
+      <a href="contact_ar.html">📩 تواصل معنا</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+      <select id="langSelect" class="lang-select">
+        <option value="ar" selected>🇸🇦 AR</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+    </nav>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+    <a href="audio_ar.html">🎧 كتب صوتية</a>
+    <a href="articles_ar.html">📚 مقالات</a>
+    <a href="curriculum_ar.html">🎓 البرنامج</a>
+    <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+    <a href="favoris_ar.html">❤️ المفضلة</a>
+    <a href="quiz_ar.html">🧠 اختبارات</a>
+    <a href="jeux_ar.html">🎮 ألعاب تعليمية</a>
+    <a href="apropos_ar.html">💡 من نحن</a>
+    <a href="contact_ar.html">📩 تواصل معنا</a>
+    <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="ar" selected>العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="home-intro">
+      <h2>🌐 مواضيع ويكيبيديا التعليمية</h2>
+      <p class="section-subtitle">اكتشف وتعلم من خلال هذه المواضيع الرائعة المستقاة من ويكيبيديا.</p>
+    </div>
+    <div id="wikiGrid" class="resources-grid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section"><h4>🌟 LumiLearn</h4><p>منصة تعليمية تساعد الأطفال على التعلم بطريقة ممتعة.</p></div>
+      <div class="footer-section"><h4>خريطة الموقع</h4><ul>
+        <li><a href="indexSIGHT_ar.html">🏠 الرئيسية</a></li>
+        <li><a href="audio_ar.html">🎧 كتب صوتية</a></li>
+        <li><a href="articles_ar.html">📚 مقالات</a></li>
+        <li><a href="curriculum_ar.html">🎓 البرنامج</a></li>
+      </ul></div>
+      <div class="footer-section"><h4>الموارد</h4><ul>
+        <li><a href="wikipedia_ar.html">🌐 ويكيبيديا</a></li>
+        <li><a href="quiz_ar.html">🧠 اختبارات</a></li>
+        <li><a href="apropos_ar.html">💡 من نحن</a></li>
+        <li><a href="contact_ar.html">📩 تواصل معنا</a></li>
+      </ul></div>
+      <div class="footer-section"><h4>اللغات</h4><ul>
+        <li>🇸🇦 العربية</li><li>🇫🇷 الفرنسية</li><li>🇬🇧 الإنجليزية</li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 LumiLearn | مشروع IEEE ENSIT CS × SIGHT Group 🌟</p></div>
+  </footer>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    menuToggle.addEventListener('click', () => mobileNav.classList.toggle('is-open'));
+
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+    function changeLanguage(lang) {
+      if (lang === 'fr') window.location.href = 'wikipedia.html';
+      else if (lang === 'en') window.location.href = 'wikipedia_en.html';
+    }
+    langSelect.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelectMobile.value = e.target.value; });
+    langSelectMobile.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelect.value = e.target.value; });
+
+    const wikiTopics = [
+      { title: "المجموعة الشمسية", desc: "تتكون المجموعة الشمسية من الشمس والأجرام السماوية التي تدور حولها.", link: "https://ar.wikipedia.org/wiki/مجموعة_شمسية" },
+      { title: "التمثيل الضوئي", desc: "عملية يحوّل فيها النبات ضوء الشمس إلى طاقة كيميائية لتصنيع غذائه.", link: "https://ar.wikipedia.org/wiki/تمثيل_ضوئي" },
+      { title: "البراكين", desc: "البركان جبل يتشكل من ثوران الصهارة من باطن الأرض.", link: "https://ar.wikipedia.org/wiki/بركان" },
+      { title: "الماء", desc: "الماء مادة أساسية للحياة، تتكون من الهيدروجين والأكسجين.", link: "https://ar.wikipedia.org/wiki/ماء" },
+      { title: "كوكب الأرض", desc: "الأرض هي الكوكب الثالث في المجموعة الشمسية والوحيد المعروف بوجود الحياة عليه.", link: "https://ar.wikipedia.org/wiki/أرض" },
+      { title: "الحيوانات", desc: "الحيوانات كائنات حية قادرة على الحركة والاستجابة لمحيطها.", link: "https://ar.wikipedia.org/wiki/حيوان" },
+      { title: "الكهرباء", desc: "الكهرباء ظاهرة مرتبطة بحركة الشحنات الكهربائية في المادة.", link: "https://ar.wikipedia.org/wiki/كهرباء" },
+      { title: "النباتات", desc: "النباتات تصنع غذاءها بنفسها عن طريق التمثيل الضوئي وتنقّي الهواء.", link: "https://ar.wikipedia.org/wiki/نبات" },
+      { title: "الفضاء الخارجي", desc: "الفضاء هو الامتداد الشاسع الذي توجد فيه النجوم والكواكب والمجرات.", link: "https://ar.wikipedia.org/wiki/فضاء_خارجي" },
+      { title: "الديناصورات", desc: "الديناصورات زواحف ضخمة سيطرت على الأرض قبل ملايين السنين.", link: "https://ar.wikipedia.org/wiki/ديناصور" },
+      { title: "الإنسان", desc: "الإنسان كائن حي متطور يمتاز بقدرته على التفكير واستخدام اللغة.", link: "https://ar.wikipedia.org/wiki/إنسان" },
+      { title: "الرياضيات", desc: "الرياضيات علم الأعداد والأشكال والمنطق التي تساعدنا على فهم العالم.", link: "https://ar.wikipedia.org/wiki/رياضيات" }
+    ];
+
+    const grid = document.getElementById("wikiGrid");
+    grid.innerHTML = wikiTopics.map(topic => `
+      <div class="resource-card wiki-card">
+        <h3>${topic.title}</h3>
+        <p>${topic.desc}</p>
+        <a href="${topic.link}" target="_blank" rel="noopener noreferrer">اعرف أكثر</a>
+      </div>
+    `).join('');
+
+    setTimeout(() => { if (typeof addFavoriteButtonsToCards === 'function') addFavoriteButtonsToCards(); }, 300);
+  </script>
+  <script src="auth.js"></script>
+  <script src="favorites.js"></script>
+</body>
+</html>

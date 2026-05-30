@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiLearn : Livres Audio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <link rel="stylesheet" href="search-styles.css" />
+</head>
+
+<body>
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_fr.html">🏠 Accueil</a>
+      <a href="audio.html">🎧 Livres Audio</a>
+      <a href="articles.html">📚 Articles</a>
+      <a href="curriculum.html">🎓 Programme</a>
+      <a href="wikipedia.html">🌐 Wikipedia</a>
+      <a href="favoris.html">❤️ Favoris</a>
+      <a href="quiz.html">🧠 Quiz</a>
+      <a href="jeux_en.html">🎮 Educational Games</a>
+      <a href="apropos.html">💡 À Propos</a>
+      <a href="contact.html">📩 Contact</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>
+      <select id="langSelect" class="lang-select">
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="ar">🇸🇦 AR</option>
+      </select>
+    </nav>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_fr.html">🏠 Accueil</a>
+    <a href="audio.html">🎧 Livres Audio</a>
+    <a href="articles.html">📚 Articles</a>
+    <a href="curriculum.html">🎓 Programme</a>
+    <a href="wikipedia.html">🌐 Wikipedia</a>
+    <a href="favoris.html">❤️ Favoris</a>
+    <a href="quiz.html">🧠 Quiz</a>
+    <a href="jeux_en.html">🎮 Educational Games</a>
+    <a href="apropos.html">💡 À Propos</a>
+    <a href="contact.html">📩 Contact</a>
+    <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+  </nav>
+
+  <section class="search-section">
+    <div class="search-content">
+      <h3>Rechercher un livre audio 🎧</h3>
+      <div class="search-bar">
+        <input id="searchInput" type="text" placeholder="Tape le titre d'un livre...">
+        <button id="searchButton">Rechercher</button>
+      </div>
+    </div>
+    <div class="search-illustration">
+      <div class="illustration-placeholder">🎵</div>
+    </div>
+    <div id="searchResults"></div>
+  </section>
+
+  <div class="container">
+    <div class="home-intro">
+      <h2>Livres Audio Suggérés</h2>
+      <p class="section-subtitle">Écoute des histoires amusantes et éducatives faites pour toi !</p>
+    </div>
+    <div id="audioGrid" class="resources-grid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>🌟 LumiLearn</h4>
+        <p>Une plateforme éducative pour aider les enfants à apprendre en s'amusant.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Plan du Site</h4>
+        <ul>
+          <li><a href="indexSIGHT_fr.html">🏠 Accueil</a></li>
+          <li><a href="audio.html">🎧 Livres Audio</a></li>
+          <li><a href="articles.html">📚 Articles</a></li>
+          <li><a href="curriculum.html">🎓 Programme</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Ressources</h4>
+        <ul>
+          <li><a href="wikipedia.html">🌐 Wikipedia</a></li>
+          <li><a href="quiz.html">🧠 Quiz</a></li>
+          <li><a href="apropos.html">💡 À Propos</a></li>
+          <li><a href="contact.html">📩 Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Langues</h4>
+        <ul>
+          <li>🇫🇷 Français</li>
+          <li>🇬🇧 English</li>
+          <li>🇸🇦 العربية</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 LumiLearn | Projet IEEE ENSIT CS × SIGHT Group 🌟</p>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('is-open');
+    });
+
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+    function changeLanguage(lang) {
+      console.log('Langue changée:', lang);
+      alert(`Langue changée: ${lang}\n\nCette fonctionnalité sera implémentée prochainement ! 🌐`);
+    }
+    langSelect.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelectMobile.value = e.target.value;
+    });
+    langSelectMobile.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelect.value = e.target.value;
+    });
+
+    const audioBooks = [
+      { title: "The Little Seed", desc: "Comment une petite graine devient un arbre puissant.", file: "Audio/THETINYSEED.mp3" },
+      { title: "A Day at the Farm", desc: "Découvre les animaux qui vivent à la ferme.", file: "Audio/farm.mp3" },
+      { title: "How to catch a Rainbow", desc: "Apprends les couleurs à travers une histoire joyeuse.", file: "Audio/Rainbow.mp3" },
+      { title: "Planet Earth", desc: "Explore les merveilles de notre planète !", file: "Audio/Earth.mp3" },
+      { title: "My First Math", desc: "Compter devient amusant pour les jeunes apprenants.", file: "Audio/Math.mp3" },
+      { title: "The Brave Little Star", desc: "Une histoire sur le courage et l'amitié.", file: "Audio/Star.mp3" }
+    ];
+
+    const grid = document.getElementById("audioGrid");
+
+    function renderAudios(list) {
+      grid.innerHTML = list.map(book => `
+        <div class="resource-card">
+          <h3>${book.title}</h3>
+          <p>${book.desc}</p>
+          <audio controls src="${book.file}" style="margin-top:15px;width:100%;"></audio>
+        </div>
+      `).join("");
+      
+      console.log('📚 Cartes audio rendues');
+      
+      // ✅ FORCER L'AJOUT DES BOUTONS FAVORIS
+      setTimeout(() => {
+        console.log('🔄 Tentative d\'ajout des favoris...');
+        if (typeof addFavoriteButtonsToCards === 'function') {
+          addFavoriteButtonsToCards();
+        } else if (typeof window.addFavoriteButtons === 'function') {
+          window.addFavoriteButtons();
+        } else {
+          console.warn('⚠️ Fonctions favoris non disponibles');
+        }
+      }, 500);
+      
+      // Sécurité : 2ème tentative
+      setTimeout(() => {
+        const btns = document.querySelectorAll('.favorite-btn');
+        if (btns.length === 0) {
+          console.log('🔄 2ème tentative d\'ajout des favoris...');
+          if (typeof addFavoriteButtonsToCards === 'function') {
+            addFavoriteButtonsToCards();
+          }
+        }
+      }, 1500);
+    }
+
+    function searchAudio() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = audioBooks.filter(b => b.title.toLowerCase().includes(query));
+      renderAudios(filtered.length ? filtered : audioBooks);
+    }
+
+    const localSearchBtn = document.getElementById("searchButton");
+    const localSearchInput = document.getElementById("searchInput");
+    
+    if (localSearchBtn && localSearchInput) {
+      localSearchBtn.addEventListener("click", searchAudio);
+      localSearchInput.addEventListener("keyup", e => { 
+        if (e.key === "Enter") searchAudio(); 
+      });
+    }
+
+    renderAudios(audioBooks);
+  </script>
+  
+  <script src="auth.js"></script>
+  <script src="favorites.js"></script>
+  <script src="search.js"></script>
+</body>
+</html>

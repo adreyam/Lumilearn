@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الاختبارات التفاعلية - LumiLearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <style>
+    body { font-family: 'Tajawal', 'Poppins', sans-serif; }
+
+    /* Quiz Hero */
+    .quiz-hero {
+      background: linear-gradient(135deg, #FFE5F1 0%, #E0F7FF 50%, #FFF8E7 100%);
+      padding: 60px 5%;
+      text-align: center;
+    }
+    .quiz-hero h2 { font-size: 2.5em; color: var(--color-primary); font-weight: 800; margin-bottom: 15px; }
+    .quiz-hero p { font-size: 1.1em; color: #555; max-width: 700px; margin: 0 auto; line-height: 1.7; }
+
+    /* Quiz Container */
+    .quiz-container { max-width: 900px; margin: 50px auto; padding: 0 5%; }
+
+    .selection-section { display: none; animation: fadeInUp 0.5s ease; }
+    .selection-section.active { display: block; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-title { font-size: 1.8em; color: var(--color-primary); text-align: center; margin-bottom: 35px; font-weight: 700; }
+
+    /* Grade Grid */
+    .grade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grade-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 3px solid transparent;
+    }
+    .grade-card:hover { transform: translateY(-8px); border-color: var(--color-primary); box-shadow: 0 15px 40px rgba(255,145,175,0.25); }
+    .grade-card.selected { border-color: var(--color-primary); background: linear-gradient(135deg, #FFF0F5, #E8F8FF); }
+    .grade-icon { font-size: 3em; margin-bottom: 15px; }
+    .grade-card h4 { font-size: 1.2em; font-weight: 700; color: var(--color-text); margin-bottom: 8px; }
+    .grade-card p { font-size: 0.9em; color: #888; }
+
+    /* Subject Grid */
+    .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .subject-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 3px solid transparent;
+    }
+    .subject-card:hover { transform: translateY(-5px); border-color: var(--color-accent); box-shadow: 0 10px 30px rgba(110,211,207,0.25); }
+    .subject-icon-display { font-size: 2.5em; margin-bottom: 12px; }
+    .subject-card h4 { font-size: 1.1em; font-weight: 700; color: var(--color-text); }
+
+    /* Difficulty Grid */
+    .difficulty-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .difficulty-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 3px solid transparent;
+    }
+    .difficulty-card:hover { transform: translateY(-8px); }
+    .difficulty-card[data-difficulty="facile"]:hover { border-color: #74C365; }
+    .difficulty-card[data-difficulty="moyen"]:hover { border-color: #FFD36E; }
+    .difficulty-card[data-difficulty="difficile"]:hover { border-color: #FF6B6B; }
+    .difficulty-icon { font-size: 3em; margin-bottom: 15px; }
+    .difficulty-card h4 { font-size: 1.3em; font-weight: 700; color: var(--color-text); margin-bottom: 8px; }
+    .difficulty-card p { font-size: 0.9em; color: #888; margin-bottom: 10px; }
+    .difficulty-stars { font-size: 1.2em; }
+
+    /* Back Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 0.95em;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 30px;
+      color: var(--color-text);
+    }
+    .back-btn:hover { border-color: var(--color-primary); color: var(--color-primary); transform: translateX(5px); }
+
+    /* Quiz Header */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .quiz-info { text-align: center; }
+    #quizTitle { display: block; font-weight: 700; font-size: 1.1em; color: var(--color-primary); margin-bottom: 5px; }
+    #quizProgress { display: block; font-size: 0.9em; color: #888; }
+    .quiz-timer {
+      background: linear-gradient(135deg, #FFE5F1, #E0F7FF);
+      padding: 10px 20px;
+      border-radius: 15px;
+      font-weight: 700;
+      font-size: 1.1em;
+      color: var(--color-text);
+    }
+
+    /* Question Card */
+    .quiz-content { background: white; border-radius: 25px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .question-card h4 { font-size: 1.4em; color: var(--color-text); margin-bottom: 30px; font-weight: 700; line-height: 1.5; }
+
+    /* Progress Bar */
+    .progress-bar-wrap { background: #f0f0f0; border-radius: 10px; height: 8px; margin-bottom: 25px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: 10px; transition: width 0.4s ease; }
+
+    /* Answers Grid */
+    .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+    .answer-btn {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      font-size: 1em;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: right;
+      color: var(--color-text);
+      line-height: 1.4;
+    }
+    .answer-btn:hover:not(:disabled) { border-color: var(--color-primary); background: linear-gradient(135deg, #FFF0F5, #FFFFFF); transform: translateY(-2px); }
+    .answer-btn.correct { border-color: #74C365; background: linear-gradient(135deg, #E3F9E5, #FFFFFF); color: #2B8A3E; }
+    .answer-btn.wrong { border-color: #FF6B6B; background: linear-gradient(135deg, #FFE5E5, #FFFFFF); color: #C92A2A; }
+    .answer-btn:disabled { cursor: default; }
+
+    /* Next Button */
+    .next-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 15px;
+      font-size: 1.1em;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,145,175,0.4); }
+    .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Results */
+    .results-card { background: white; border-radius: 25px; padding: 50px 40px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .results-icon { font-size: 80px; display: block; margin-bottom: 20px; animation: bounce 1s ease infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    .results-card h3 { font-size: 2em; color: var(--color-primary); margin-bottom: 30px; font-weight: 800; }
+    .score-display { margin: 30px 0; }
+    .score-circle {
+      width: 150px; height: 150px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(255,145,175,0.3);
+    }
+    #scoreText { font-size: 2em; font-weight: 800; color: white; }
+    #scorePercentage { font-size: 1.5em; font-weight: 700; color: var(--color-primary); }
+    .results-message { background: linear-gradient(135deg, #FFF8F0, #FFE5F1); border-radius: 15px; padding: 20px; margin: 20px 0; font-size: 1.1em; color: #555; line-height: 1.7; }
+    .results-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .btn-primary, .btn-secondary {
+      padding: 14px 28px;
+      border-radius: 15px;
+      font-size: 1em;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; }
+    .btn-secondary { background: white; border: 2px solid var(--color-primary); color: var(--color-primary); }
+    .btn-primary:hover, .btn-secondary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+    /* Correction */
+    .correction-content { display: flex; flex-direction: column; gap: 20px; }
+    .correction-item {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      border-right: 5px solid #e0e0e0;
+      direction: rtl;
+      text-align: right;
+    }
+    .correction-item.correct { border-right-color: #74C365; }
+    .correction-item.wrong { border-right-color: #FF6B6B; }
+    .correction-item .question-num { font-size: 0.85em; color: #888; margin-bottom: 8px; }
+    .correction-item .question-text { font-weight: 700; margin-bottom: 15px; color: var(--color-text); line-height: 1.5; }
+    .correction-item .your-answer { font-size: 0.95em; margin-bottom: 5px; }
+    .correction-item .correct-answer { font-size: 0.95em; font-weight: 600; color: #2B8A3E; }
+    .correction-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+
+    @media (max-width: 768px) {
+      .grade-grid, .difficulty-grid { grid-template-columns: repeat(2, 1fr); }
+      .answers-grid { grid-template-columns: 1fr; }
+      .quiz-header { flex-direction: column; text-align: center; }
+      .results-actions, .correction-actions { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .grade-grid { grid-template-columns: repeat(2, 1fr); }
+      .quiz-content { padding: 25px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+      <a href="audio_ar.html">🎧 كتب صوتية</a>
+      <a href="articles_ar.html">📚 مقالات</a>
+      <a href="curriculum_ar.html">🎓 البرنامج</a>
+      <a href="wikipedia_ar.html">🌐 ويكيبيديا</a>
+      <a href="favoris_ar.html">❤️ المفضلة</a>
+      <a href="quiz_ar.html">🧠 اختبارات</a>
+      <a href="jeux_ar.html">🎮 ألعاب تعليمية</a>
+      <a href="apropos_ar.html">💡 من نحن</a>
+      <a href="contact_ar.html">📩 تواصل معنا</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+      <select id="langSelect" class="lang-select">
+        <option value="ar" selected>🇸🇦 AR</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+    </nav>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_ar.html">🏠 الرئيسية</a>
+    <a href="audio_ar.html">🎧 كتب صوتية</a>
+    <a href="articles_ar.html">📚 مقالات</a>
+    <a href="curriculum_ar.html">🎓 البرنامج</a>
+    <a href="favoris_ar.html">❤️ المفضلة</a>
+    <a href="quiz_ar.html">🧠 اختبارات</a>
+    <a href="apropos_ar.html">💡 من نحن</a>
+    <a href="contact_ar.html">📩 تواصل معنا</a>
+    <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 تسجيل الدخول</a>
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="ar" selected>العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </nav>
+
+  <section class="quiz-hero">
+    <div class="hero-content">
+      <h2>الاختبارات التفاعلية 🧠✨</h2>
+      <p>اختبر معلوماتك بمسابقاتنا الممتعة! اختر مستواك، مادتك، ودرجة الصعوبة لتبدأ المغامرة! 🎯📖</p>
+    </div>
+  </section>
+
+  <div class="quiz-container">
+
+    <!-- الخطوة 1: اختيار السنة -->
+    <div id="gradeSelection" class="selection-section active">
+      <h3 class="section-title">📚 اختر مستواك الدراسي</h3>
+      <div class="grade-grid">
+        <div class="grade-card" data-grade="1"><div class="grade-icon">1️⃣</div><h4>السنة الأولى</h4><p>الأساسيات الأولى</p></div>
+        <div class="grade-card" data-grade="2"><div class="grade-icon">2️⃣</div><h4>السنة الثانية</h4><p>طوّر مهاراتك</p></div>
+        <div class="grade-card" data-grade="3"><div class="grade-icon">3️⃣</div><h4>السنة الثالثة</h4><p>عمّق معارفك</p></div>
+        <div class="grade-card" data-grade="4"><div class="grade-icon">4️⃣</div><h4>السنة الرابعة</h4><p>وسّع آفاقك</p></div>
+        <div class="grade-card" data-grade="5"><div class="grade-icon">5️⃣</div><h4>السنة الخامسة</h4><p>استعد للمتوسط</p></div>
+        <div class="grade-card" data-grade="6"><div class="grade-icon">6️⃣</div><h4>السنة السادسة</h4><p>امتحان نهاية المرحلة</p></div>
+      </div>
+    </div>
+
+    <!-- الخطوة 2: اختيار المادة -->
+    <div id="subjectSelection" class="selection-section">
+      <button class="back-btn" onclick="goBack('gradeSelection')">→ رجوع</button>
+      <h3 class="section-title">📖 اختر المادة</h3>
+      <div class="subject-grid" id="subjectGrid"></div>
+    </div>
+
+    <!-- الخطوة 3: اختيار الصعوبة -->
+    <div id="difficultySelection" class="selection-section">
+      <button class="back-btn" onclick="goBack('subjectSelection')">→ رجوع</button>
+      <h3 class="section-title">🎯 اختر مستوى الصعوبة</h3>
+      <div class="difficulty-grid">
+        <div class="difficulty-card" data-difficulty="facile">
+          <div class="difficulty-icon">😊</div>
+          <h4>سهل</h4>
+          <p>10 أسئلة بسيطة</p>
+          <div class="difficulty-stars">⭐⭐</div>
+        </div>
+        <div class="difficulty-card" data-difficulty="moyen">
+          <div class="difficulty-icon">🤔</div>
+          <h4>متوسط</h4>
+          <p>15 سؤالاً متنوعاً</p>
+          <div class="difficulty-stars">⭐⭐⭐</div>
+        </div>
+        <div class="difficulty-card" data-difficulty="difficile">
+          <div class="difficulty-icon">🔥</div>
+          <h4>صعب</h4>
+          <p>20 سؤالاً متقدماً</p>
+          <div class="difficulty-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- الخطوة 4: الاختبار -->
+    <div id="quizSection" class="selection-section">
+      <div class="quiz-header">
+        <button class="back-btn" onclick="goBack('difficultySelection')">→ رجوع</button>
+        <div class="quiz-info">
+          <span id="quizTitle">اختبار</span>
+          <span id="quizProgress">السؤال 1/10</span>
+        </div>
+        <div class="quiz-timer" id="quizTimer">⏱️ 00:00</div>
+      </div>
+      <div class="quiz-content">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+        <div class="question-card">
+          <h4 id="questionText">سيظهر السؤال هنا</h4>
+          <div class="answers-grid" id="answersGrid"></div>
+        </div>
+        <button class="next-btn" id="nextBtn" disabled>التالي ←</button>
+      </div>
+    </div>
+
+    <!-- الخطوة 5: النتائج -->
+    <div id="resultsSection" class="selection-section">
+      <div class="results-card">
+        <span class="results-icon" id="resultsIcon">🎉</span>
+        <h3 id="resultsTitle">مبروك!</h3>
+        <div class="score-display">
+          <div class="score-circle"><span id="scoreText">0/10</span></div>
+          <p id="scorePercentage">0%</p>
+        </div>
+        <div class="results-message" id="resultsMessage"></div>
+        <div class="results-actions">
+          <button class="btn-primary" onclick="showCorrection()">📋 عرض التصحيح</button>
+          <button class="btn-secondary" onclick="restartQuiz()">🔄 إعادة الاختبار</button>
+          <button class="btn-secondary" onclick="goToSelection()">🏠 اختبار جديد</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- الخطوة 6: التصحيح -->
+    <div id="correctionSection" class="selection-section">
+      <button class="back-btn" onclick="goBack('resultsSection')">→ العودة إلى النتائج</button>
+      <h3 class="section-title">📋 التصحيح التفصيلي</h3>
+      <div id="correctionContent" class="correction-content"></div>
+      <div class="correction-actions">
+        <button class="btn-primary" onclick="restartQuiz()">🔄 إعادة الاختبار</button>
+        <button class="btn-secondary" onclick="goToSelection()">🏠 اختبار جديد</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section"><h4>🌟 LumiLearn</h4><p>منصة تعليمية تساعد الأطفال على التعلم بطريقة ممتعة.</p></div>
+      <div class="footer-section"><h4>خريطة الموقع</h4><ul>
+        <li><a href="indexSIGHT_ar.html">🏠 الرئيسية</a></li>
+        <li><a href="audio_ar.html">🎧 كتب صوتية</a></li>
+        <li><a href="articles_ar.html">📚 مقالات</a></li>
+        <li><a href="curriculum_ar.html">🎓 البرنامج</a></li>
+      </ul></div>
+      <div class="footer-section"><h4>الموارد</h4><ul>
+        <li><a href="wikipedia_ar.html">🌐 ويكيبيديا</a></li>
+        <li><a href="quiz_ar.html">🧠 اختبارات</a></li>
+        <li><a href="apropos_ar.html">💡 من نحن</a></li>
+        <li><a href="contact_ar.html">📩 تواصل معنا</a></li>
+      </ul></div>
+      <div class="footer-section"><h4>اللغات</h4><ul>
+        <li>🇸🇦 العربية</li><li>🇫🇷 الفرنسية</li><li>🇬🇧 الإنجليزية</li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 LumiLearn | مشروع IEEE ENSIT CS × SIGHT Group 🌟</p></div>
+  </footer>
+
+  <script>
+    // ====== Language & Nav ======
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    menuToggle.addEventListener('click', () => mobileNav.classList.toggle('is-open'));
+
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+    function changeLanguage(lang) {
+      if (lang === 'fr') window.location.href = 'quiz.html';
+      else if (lang === 'en') window.location.href = 'quiz_en.html';
+    }
+    langSelect.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelectMobile.value = e.target.value; });
+    langSelectMobile.addEventListener('change', (e) => { changeLanguage(e.target.value); langSelect.value = e.target.value; });
+
+    // ====== Quiz Data ======
+    const subjectsByGrade = {
+      1: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'science', name: 'التربية العلمية', icon: '🌱' },
+        { id: 'islamic', name: 'التربية الإسلامية', icon: '📿' }
+      ],
+      2: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'french', name: 'اللغة الفرنسية', icon: '🇫🇷' },
+        { id: 'science', name: 'العلوم', icon: '🔬' }
+      ],
+      3: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'french', name: 'اللغة الفرنسية', icon: '🇫🇷' },
+        { id: 'science', name: 'العلوم', icon: '🔬' },
+        { id: 'islamic', name: 'التربية الإسلامية', icon: '📿' }
+      ],
+      4: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'french', name: 'اللغة الفرنسية', icon: '🇫🇷' },
+        { id: 'science', name: 'العلوم', icon: '🔬' },
+        { id: 'history', name: 'التاريخ', icon: '🏛️' },
+        { id: 'geography', name: 'الجغرافيا', icon: '🗺️' }
+      ],
+      5: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'french', name: 'اللغة الفرنسية', icon: '🇫🇷' },
+        { id: 'science', name: 'العلوم', icon: '🔬' },
+        { id: 'history', name: 'التاريخ والجغرافيا', icon: '🌍' },
+        { id: 'islamic', name: 'التربية الإسلامية', icon: '📿' }
+      ],
+      6: [
+        { id: 'math', name: 'الرياضيات', icon: '🔢' },
+        { id: 'arabic', name: 'اللغة العربية', icon: '📖' },
+        { id: 'french', name: 'اللغة الفرنسية', icon: '🇫🇷' },
+        { id: 'science', name: 'العلوم والتكنولوجيا', icon: '🔬' },
+        { id: 'history', name: 'التاريخ والجغرافيا', icon: '🌍' },
+        { id: 'civic', name: 'التربية المدنية', icon: '🏛️' }
+      ]
+    };
+
+    const questionBank = {
+      math: {
+        facile: [
+          { q: "كم يساوي 5 + 3 ؟", answers: ["7", "8", "9", "6"], correct: 1 },
+          { q: "كم يساوي 10 - 4 ؟", answers: ["5", "6", "7", "8"], correct: 1 },
+          { q: "كم يساوي 3 × 3 ؟", answers: ["6", "7", "9", "8"], correct: 2 },
+          { q: "أي عدد هو الأكبر ؟", answers: ["45", "54", "49", "44"], correct: 1 },
+          { q: "كم يساوي 20 ÷ 4 ؟", answers: ["4", "5", "6", "8"], correct: 1 },
+          { q: "كم يساوي 7 + 8 ؟", answers: ["14", "15", "13", "16"], correct: 1 },
+          { q: "ما هو شكل له 4 أضلاع متساوية ؟", answers: ["مثلث", "مربع", "دائرة", "مستطيل"], correct: 1 },
+          { q: "كم يساوي 15 - 9 ؟", answers: ["5", "6", "7", "8"], correct: 1 },
+          { q: "كم يساوي 4 × 5 ؟", answers: ["18", "20", "22", "16"], correct: 1 },
+          { q: "أي عدد زوجي ؟", answers: ["7", "9", "12", "11"], correct: 2 }
+        ],
+        moyen: [
+          { q: "كم يساوي 25 × 4 ؟", answers: ["90", "100", "80", "120"], correct: 1 },
+          { q: "كم يساوي 144 ÷ 12 ؟", answers: ["10", "11", "12", "13"], correct: 2 },
+          { q: "ما هو ناتج 3/4 + 1/4 ؟", answers: ["1/2", "1", "3/8", "5/4"], correct: 1 },
+          { q: "ما هو محيط مربع طول ضلعه 6 سم ؟", answers: ["12 سم", "24 سم", "36 سم", "18 سم"], correct: 1 },
+          { q: "كم يساوي 0.5 + 0.75 ؟", answers: ["1.15", "1.25", "1.5", "0.125"], correct: 1 },
+          { q: "كم يساوي 85 × 2 ؟", answers: ["160", "170", "180", "175"], correct: 1 },
+          { q: "ما مساحة مستطيل طوله 8 وعرضه 5 ؟", answers: ["26", "40", "13", "30"], correct: 1 },
+          { q: "كم يساوي 1000 - 375 ؟", answers: ["635", "625", "615", "645"], correct: 1 },
+          { q: "أي عدد أولي من بين التالية ؟", answers: ["9", "15", "13", "21"], correct: 2 },
+          { q: "كم يساوي 2/3 × 3/4 ؟", answers: ["1/2", "6/12", "5/12", "3/8"], correct: 0 },
+          { q: "كم يساوي 5² ؟", answers: ["10", "25", "15", "20"], correct: 1 },
+          { q: "كم يساوي 480 ÷ 8 ؟", answers: ["50", "60", "70", "55"], correct: 1 },
+          { q: "ما هي نسبة 3 من 12 ؟", answers: ["20%", "25%", "30%", "15%"], correct: 1 },
+          { q: "كم يساوي 3.5 × 4 ؟", answers: ["12", "14", "16", "13"], correct: 1 },
+          { q: "ما مجموع زوايا المثلث ؟", answers: ["90°", "180°", "270°", "360°"], correct: 1 }
+        ],
+        difficile: [
+          { q: "إذا كانت ⅔ من عدد = 14، ما العدد ؟", answers: ["18", "21", "24", "28"], correct: 1 },
+          { q: "ما مساحة دائرة نصف قطرها 7 سم ؟ (π≈3.14)", answers: ["154 سم²", "44 سم²", "49 سم²", "22 سم²"], correct: 0 },
+          { q: "ما هو الجذر التربيعي لـ 169 ؟", answers: ["11", "12", "13", "14"], correct: 2 },
+          { q: "قطع قطار 120 كم في ساعتين. ما سرعته ؟", answers: ["50 كم/س", "60 كم/س", "70 كم/س", "80 كم/س"], correct: 1 },
+          { q: "حجم مكعب طول حرفه 4 سم ؟", answers: ["12 سم³", "48 سم³", "64 سم³", "16 سم³"], correct: 2 },
+          { q: "15% من 200 = ؟", answers: ["25", "30", "35", "20"], correct: 1 },
+          { q: "ما هو الحد الأكبر المشترك (H.C.M) لـ 24 و 36 ؟", answers: ["6", "8", "12", "18"], correct: 2 },
+          { q: "إذا كانت نسبة التوفير 20%، كم يتبقى من 500 دج ؟", answers: ["400 دج", "100 دج", "450 دج", "380 دج"], correct: 0 },
+          { q: "ما هو المضاعف المشترك الأصغر (P.P.C.M) لـ 4 و 6 ؟", answers: ["12", "24", "8", "18"], correct: 0 },
+          { q: "ما هو مثلث متساوي الأضلاع ؟", answers: ["له زاوية قائمة", "جميع أضلاعه متساوية", "له ضلعان متساويان", "أكبر زاوية 90°"], correct: 1 },
+          { q: "5 × 10³ = ؟", answers: ["500", "5000", "50000", "50"], correct: 1 },
+          { q: "قطعة أرض 12م × 15م. ما مساحتها بالهكتار ؟", answers: ["0.018 هكتار", "0.18 هكتار", "1.8 هكتار", "180 هكتار"], correct: 0 },
+          { q: "ما هو ناتج: 2 + 3 × 4 - 1 ؟", answers: ["19", "13", "15", "12"], correct: 1 },
+          { q: "سرعة 90 كم/س بالمتر في الثانية ؟", answers: ["15 م/ث", "25 م/ث", "30 م/ث", "20 م/ث"], correct: 1 },
+          { q: "مجموع أعداد من 1 إلى 10 ؟", answers: ["45", "50", "55", "60"], correct: 2 },
+          { q: "¾ + ⅔ = ؟", answers: ["5/7", "17/12", "7/12", "1"], correct: 1 },
+          { q: "مساحة مثلث قاعدته 10 وارتفاعه 6 ؟", answers: ["30", "60", "15", "36"], correct: 0 },
+          { q: "إذا كانت x + 5 = 12، فـ x = ؟", answers: ["5", "6", "7", "8"], correct: 2 },
+          { q: "ما هو ناتج (-3) × (-4) ؟", answers: ["-12", "12", "7", "-7"], correct: 1 },
+          { q: "كم لتراً في 3.5 م³ ؟", answers: ["350 ل", "3500 ل", "35 ل", "350000 ل"], correct: 1 }
+        ]
+      },
+      arabic: {
+        facile: [
+          { q: "كم حرفاً في الأبجدية العربية ؟", answers: ["26", "28", "30", "24"], correct: 1 },
+          { q: "ما مفرد كلمة 'كتب' ؟", answers: ["كتاب", "كاتب", "مكتبة", "كتيب"], correct: 0 },
+          { q: "ما المقابل للمذكر 'طالب' ؟", answers: ["مدرسة", "طالبة", "تلميذة", "معلمة"], correct: 1 },
+          { q: "أي كلمة تبدأ بحرف 'ش' ؟", answers: ["سمكة", "شمس", "صقر", "سماء"], correct: 1 },
+          { q: "ما جمع كلمة 'قلم' ؟", answers: ["أقلام", "قلوم", "قلمات", "قلمون"], correct: 0 },
+          { q: "ما ضد كلمة 'كبير' ؟", answers: ["طويل", "صغير", "قصير", "قديم"], correct: 1 },
+          { q: "أي كلمة تعني مضادة لـ 'سريع' ؟", answers: ["بطيء", "قوي", "ذكي", "جميل"], correct: 0 },
+          { q: "كم حركة في اللغة العربية ؟", answers: ["2", "3", "4", "5"], correct: 1 },
+          { q: "ما معنى كلمة 'فرح' ؟", answers: ["حزن", "غضب", "سعادة", "خوف"], correct: 2 },
+          { q: "أي جملة صحيحة ؟", answers: ["ذهب أنا المدرسة", "ذهبتُ إلى المدرسة", "المدرسة ذهب", "أنا ذهب"], correct: 1 }
+        ],
+        moyen: [
+          { q: "ما الفاعل في جملة: 'كتب الطالبُ الدرسَ' ؟", answers: ["الدرسَ", "كتب", "الطالبُ", "ما من فاعل"], correct: 2 },
+          { q: "ما إعراب 'الكتابَ' في: قرأتُ الكتابَ ؟", answers: ["فاعل مرفوع", "مبتدأ", "مفعول به منصوب", "خبر"], correct: 2 },
+          { q: "ما جمع 'قصيدة' ؟", answers: ["قصائد", "قصيدات", "قصيود", "أقاصيد"], correct: 0 },
+          { q: "ما المصدر من الفعل 'كتب' ؟", answers: ["كاتب", "مكتوب", "كتابة", "كتيب"], correct: 2 },
+          { q: "أي حرف جر من هذه الأحرف ؟", answers: ["ثم", "لكن", "في", "أو"], correct: 2 },
+          { q: "ما ضد 'خروج' ؟", answers: ["انطلاق", "دخول", "صعود", "هبوط"], correct: 1 },
+          { q: "أي كلمة مؤنث مجازي ؟", answers: ["معلمة", "شمس", "بنت", "أم"], correct: 1 },
+          { q: "من هو الشاعر الذي لقّب بـ'أمير الشعراء' ؟", answers: ["المتنبي", "أحمد شوقي", "أبو نواس", "محمود درويش"], correct: 1 },
+          { q: "ما نوع الجملة: 'الحديقةُ جميلةٌ' ؟", answers: ["فعلية", "اسمية", "شرطية", "استفهامية"], correct: 1 },
+          { q: "ما مفرد 'أولياء' ؟", answers: ["وليّ", "ولاية", "ولي أمر", "ولايات"], correct: 0 },
+          { q: "ما الفرق بين الفعل المتعدي واللازم ؟", answers: ["المتعدي يأتي دائماً ماضياً", "المتعدي يأخذ مفعولاً به", "اللازم أكثر شيوعاً", "لا فرق بينهما"], correct: 1 },
+          { q: "أي علامة ترقيم تستخدم في نهاية السؤال ؟", answers: ["النقطة .", "الفاصلة ،", "علامة الاستفهام ؟", "النقطتان :"], correct: 2 },
+          { q: "ما المعنى المجازي لـ 'قلبه من حجر' ؟", answers: ["قلبه ثقيل", "شخص قاسٍ", "قلبه صغير", "شخص قوي"], correct: 1 },
+          { q: "ما مرادف 'ذكي' ؟", answers: ["غبي", "نشيط", "فطن", "كسول"], correct: 2 },
+          { q: "في أي أسلوب نستخدم 'يا' ؟", answers: ["الاستفهام", "النداء", "التعجب", "النفي"], correct: 1 }
+        ],
+        difficile: Array.from({length: 20}, (_, i) => ({
+          q: `سؤال متقدم في النحو ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: Math.floor(Math.random() * 4)
+        }))
+      },
+      science: {
+        facile: [
+          { q: "أي كوكب هو أقرب الكواكب للشمس ؟", answers: ["المريخ", "الزهرة", "عطارد", "الأرض"], correct: 2 },
+          { q: "ما وظيفة الجذور في النبات ؟", answers: ["صنع الغذاء", "امتصاص الماء والأملاح", "التنفس", "الاستقبال الضوئي"], correct: 1 },
+          { q: "كم عدد الفصول في السنة ؟", answers: ["3", "4", "5", "6"], correct: 1 },
+          { q: "ما الذي يجعل النباتات خضراء ؟", answers: ["الماء", "الضوء", "الكلوروفيل", "التربة"], correct: 2 },
+          { q: "أي حيوان يعيش في البحر ويتنفس خياشيم ؟", answers: ["الحوت", "السمكة", "فرس البحر", "الدلفين"], correct: 1 },
+          { q: "ما مصدر الضوء والحرارة للأرض ؟", answers: ["القمر", "النجوم", "الشمس", "النار"], correct: 2 },
+          { q: "ما الذي يمنحنا الأكسجين ؟", answers: ["الحيوانات", "النباتات", "التربة", "الماء"], correct: 1 },
+          { q: "أين يعيش السمك ؟", answers: ["في البر", "في الهواء", "في الماء", "تحت الأرض"], correct: 2 },
+          { q: "ما مادة الغذاء الأساسية للنباتات ؟", answers: ["أملاح معدنية فقط", "ماء وثاني أكسيد الكربون وضوء", "تربة", "هواء فقط"], correct: 1 },
+          { q: "من الحيوانات الثدييات ؟", answers: ["السمكة", "الأفعى", "الحوت", "القرش"], correct: 2 }
+        ],
+        moyen: [
+          { q: "ما العملية التي تنتج الأكسجين ؟", answers: ["التنفس", "التمثيل الضوئي", "الاحتراق", "التبخر"], correct: 1 },
+          { q: "ما رمز الماء الكيميائي ؟", answers: ["CO2", "H2O", "O2", "NaCl"], correct: 1 },
+          { q: "ما عدد الحواس البشرية الرئيسية ؟", answers: ["3", "4", "5", "6"], correct: 2 },
+          { q: "ما وظيفة الكريات الحمراء في الدم ؟", answers: ["مكافحة الميكروبات", "نقل الأكسجين", "التجلط", "إنتاج الأجسام المضادة"], correct: 1 },
+          { q: "في أي طبقة من الغلاف الجوي نجد الأوزون ؟", answers: ["التروبوسفير", "الستراتوسفير", "الميزوسفير", "الثيرموسفير"], correct: 1 },
+          { q: "ما الفرق بين الصخور النارية والرسوبية ؟", answers: ["النارية تتشكل بفعل الضغط", "النارية تأتي من البركان", "الرسوبية تكوّنت من الحمم", "لا فرق"], correct: 1 },
+          { q: "كم تبعد الشمس عن الأرض تقريباً ؟", answers: ["150 مليون كم", "15 مليون كم", "1500 مليون كم", "100000 كم"], correct: 0 },
+          { q: "ما الفرق بين التبخر والغليان ؟", answers: ["الغليان أبطأ", "التبخر يحدث عند أي درجة حرارة", "لا فرق بينهما", "التبخر يحتاج حرارة أكبر"], correct: 1 },
+          { q: "أي جهاز في الجسم ينقي الدم من السموم ؟", answers: ["الرئتان", "القلب", "الكبد", "الكلى"], correct: 2 },
+          { q: "ما المقصود بالسلسلة الغذائية ؟", answers: ["قائمة طعام الحيوانات", "علاقة 'مَن يأكل مَن' في الطبيعة", "طريقة زراعة النباتات", "نظام هضم الطعام"], correct: 1 },
+          { q: "ما المادة التي تضيء المصباح الكهربائي ؟", answers: ["الزئبق", "الكربون", "التنغستن", "النحاس"], correct: 2 },
+          { q: "ما الإنزيم المسؤول عن هضم الطعام في الفم ؟", answers: ["البيبسين", "الأميلاز", "الليباز", "التريبسين"], correct: 1 },
+          { q: "كم متر في الكيلومتر ؟", answers: ["100", "1000", "10000", "100000"], correct: 1 },
+          { q: "ما الذي يسبب فصل الخريف بالنسبة للأشجار ؟", answers: ["زيادة الأمطار", "قلة الضوء والبرودة", "ارتفاع الحرارة", "الريح الشديدة"], correct: 1 },
+          { q: "ما الذي يحمي الأرض من الأشعة فوق البنفسجية ؟", answers: ["الغيوم", "طبقة الأوزون", "الغلاف الجوي السفلي", "المغناطيسية الأرضية"], correct: 1 }
+        ],
+        difficile: Array.from({length: 20}, (_, i) => ({
+          q: `سؤال علمي متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      },
+      history: {
+        facile: [
+          { q: "ما اسم أول نبي في الإسلام ؟", answers: ["إبراهيم", "موسى", "آدم", "نوح"], correct: 2 },
+          { q: "ما اسم عاصمة تونس ؟", answers: ["صفاقس", "سوسة", "تونس", "قابس"], correct: 2 },
+          { q: "من فتح مكة المكرمة ؟", answers: ["أبو بكر الصديق", "عمر بن الخطاب", "النبي محمد ﷺ", "علي بن أبي طالب"], correct: 2 },
+          { q: "ما الحضارة التي بنت الأهرامات ؟", answers: ["الرومانية", "اليونانية", "الفرعونية", "الفينيقية"], correct: 2 },
+          { q: "في أي قارة تقع تونس ؟", answers: ["آسيا", "أوروبا", "أمريكا", "إفريقيا"], correct: 3 }
+        ],
+        moyen: [
+          { q: "في أي سنة استقلت تونس ؟", answers: ["1954", "1956", "1958", "1962"], correct: 1 },
+          { q: "من هو المؤسس الأول للدولة الزيتونية التونسية ؟", answers: ["الحبيب بورقيبة", "زين العابدين بن علي", "محمد علي", "الأغالبة"], correct: 0 },
+          { q: "ما اسم الطريق التجاري الذي ربط آسيا بأوروبا ؟", answers: ["طريق الأفارقة", "طريق الحرير", "طريق التوابل", "طريق الذهب"], correct: 1 },
+          { q: "من اكتشف أمريكا عام 1492 ؟", answers: ["فاسكو دي غاما", "ماجلان", "كريستوف كولومبوس", "ابن بطوطة"], correct: 2 },
+          { q: "ما اسم أول خليفة للمسلمين بعد النبي ﷺ ؟", answers: ["عمر بن الخطاب", "أبو بكر الصديق", "عثمان بن عفان", "علي بن أبي طالب"], correct: 1 }
+        ],
+        difficile: Array.from({length: 10}, (_, i) => ({
+          q: `سؤال تاريخي متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      },
+      french: {
+        facile: [
+          { q: "كيف تقول 'مرحباً' بالفرنسية ؟", answers: ["Au revoir", "Bonjour", "Merci", "S'il vous plaît"], correct: 1 },
+          { q: "كيف تقول 'شكراً' بالفرنسية ؟", answers: ["Bonjour", "Pardon", "Merci", "Bonsoir"], correct: 2 },
+          { q: "ما معنى كلمة 'chat' الفرنسية ؟", answers: ["كلب", "قطة", "طائر", "أسد"], correct: 1 },
+          { q: "كيف تقول العدد 10 بالفرنسية ؟", answers: ["Huit", "Neuf", "Dix", "Onze"], correct: 2 },
+          { q: "ما معنى 'maison' بالفرنسية ؟", answers: ["مدرسة", "بيت", "سيارة", "شارع"], correct: 1 }
+        ],
+        moyen: [
+          { q: "ما مؤنث 'un ami' الفرنسي ؟", answers: ["une amie", "un amie", "une ami", "des amis"], correct: 0 },
+          { q: "أي فعل مساعد من الأفعال الفرنسية ؟", answers: ["manger", "être", "parler", "jouer"], correct: 1 },
+          { q: "كيف نصرّف 'aller' في المضارع للـ 'je' ؟", answers: ["je aller", "je vais", "j'alle", "je allez"], correct: 1 },
+          { q: "ما معنى 'Pourquoi' ؟", answers: ["كيف", "متى", "لماذا", "من"], correct: 2 },
+          { q: "أي جملة صحيحة بالفرنسية ؟", answers: ["Je mange le pomme", "Je mange la pomme", "Je mange les pomme", "Je manges la pomme"], correct: 1 }
+        ],
+        difficile: Array.from({length: 10}, (_, i) => ({
+          q: `سؤال فرنسي متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      },
+      islamic: {
+        facile: [
+          { q: "كم ركناً للإسلام ؟", answers: ["3", "4", "5", "6"], correct: 2 },
+          { q: "كم مرة في اليوم يصلي المسلم ؟", answers: ["3", "4", "5", "6"], correct: 2 },
+          { q: "ما الكتاب المقدس للمسلمين ؟", answers: ["الإنجيل", "التوراة", "القرآن الكريم", "الزبور"], correct: 2 },
+          { q: "ما اسم شهر الصيام في الإسلام ؟", answers: ["شعبان", "رمضان", "رجب", "محرم"], correct: 1 },
+          { q: "في أي مدينة ولد النبي محمد ﷺ ؟", answers: ["المدينة المنورة", "مكة المكرمة", "الطائف", "القدس"], correct: 1 }
+        ],
+        moyen: [
+          { q: "ما أول سورة في القرآن الكريم ؟", answers: ["البقرة", "الفاتحة", "الإخلاص", "الناس"], correct: 1 },
+          { q: "كم عدد آيات سورة الفاتحة ؟", answers: ["5", "6", "7", "8"], correct: 2 },
+          { q: "ما اسم زوجة النبي إبراهيم أم إسماعيل ؟", answers: ["سارة", "هاجر", "مريم", "آسية"], correct: 1 },
+          { q: "ما مدة صيام رمضان تقريباً ؟", answers: ["20 يوماً", "25 يوماً", "28-30 يوماً", "35 يوماً"], correct: 2 },
+          { q: "من هو أول خليفة في الإسلام ؟", answers: ["عمر بن الخطاب", "أبو بكر الصديق", "عثمان بن عفان", "علي بن أبي طالب"], correct: 1 }
+        ],
+        difficile: Array.from({length: 10}, (_, i) => ({
+          q: `سؤال إسلامي متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      },
+      geography: {
+        facile: [
+          { q: "كم قارة في العالم ؟", answers: ["5", "6", "7", "8"], correct: 2 },
+          { q: "ما أطول نهر في العالم ؟", answers: ["نهر الأمازون", "نهر النيل", "نهر المسيسيبي", "نهر الدانوب"], correct: 1 },
+          { q: "ما أكبر قارة في العالم ؟", answers: ["إفريقيا", "أمريكا", "آسيا", "أوروبا"], correct: 2 },
+          { q: "ما اسم أكبر محيطات العالم ؟", answers: ["المحيط الأطلسي", "المحيط الهندي", "المحيط المتجمد الشمالي", "المحيط الهادئ"], correct: 3 },
+          { q: "ما عاصمة المملكة العربية السعودية ؟", answers: ["جدة", "الرياض", "مكة المكرمة", "الدمام"], correct: 1 }
+        ],
+        moyen: [
+          { q: "أين يقع جبل إيفرست ؟", answers: ["الهند", "الصين", "نيبال وتيبت", "باكستان"], correct: 2 },
+          { q: "ما أصغر دولة في العالم ؟", answers: ["موناكو", "سان مارينو", "الفاتيكان", "ليشتنشتاين"], correct: 2 },
+          { q: "في أي قارة تقع البرازيل ؟", answers: ["إفريقيا", "آسيا", "أمريكا الشمالية", "أمريكا الجنوبية"], correct: 3 },
+          { q: "ما اسم الصحراء الأكبر في العالم ؟", answers: ["صحراء العرب", "صحراء غوبي", "صحراء الصحراء الكبرى", "صحراء أستراليا"], correct: 2 },
+          { q: "كم عدد ولايات تونس ؟", answers: ["20", "24", "28", "32"], correct: 1 }
+        ],
+        difficile: Array.from({length: 10}, (_, i) => ({
+          q: `سؤال جغرافي متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      },
+      civic: {
+        facile: [
+          { q: "ما عاصمة تونس ؟", answers: ["صفاقس", "سوسة", "تونس", "قابس"], correct: 2 },
+          { q: "ما رمز تونس الوطني ؟", answers: ["النخلة", "السهم", "النسر", "الهلال والنجمة", ], correct: 3 },
+          { q: "ما ألوان العلم التونسي ؟", answers: ["أبيض وأخضر", "أحمر وأبيض", "أزرق وأبيض", "أحمر وأسود"], correct: 1 },
+          { q: "ما الواجب الوطني للمواطن ؟", answers: ["لا يوجد", "دفع الضرائب والتصويت", "فقط دفع الضرائب", "فقط التصويت"], correct: 1 },
+          { q: "ما سن التصويت في تونس ؟", answers: ["16 سنة", "18 سنة", "20 سنة", "21 سنة"], correct: 1 }
+        ],
+        moyen: [
+          { q: "ما الفرق بين الحقوق والواجبات ؟", answers: ["لا فرق", "الحقوق ما للمواطن والواجبات ما عليه", "الواجبات فقط للدولة", "الحقوق اختيارية والواجبات إلزامية فقط"], correct: 1 },
+          { q: "من يمثل رأس الدولة في تونس ؟", answers: ["رئيس الحكومة", "رئيس الجمهورية", "رئيس البرلمان", "الوزير الأول"], correct: 1 },
+          { q: "ما دور البرلمان ؟", answers: ["تطبيق القوانين", "سن القوانين", "القضاء والحكم", "إدارة المدارس"], correct: 1 },
+          { q: "ما مبدأ المساواة أمام القانون ؟", answers: ["المواطنون الأغنياء لهم حقوق أكثر", "جميع المواطنين متساوون في الحقوق والواجبات", "فقط المواطنون البالغون متساوون", "المساواة مستحيلة"], correct: 1 },
+          { q: "ما هي منظمة الأمم المتحدة ؟", answers: ["مجموعة اقتصادية", "منظمة دولية للسلام والتعاون", "حلف عسكري", "منظمة دينية"], correct: 1 }
+        ],
+        difficile: Array.from({length: 10}, (_, i) => ({
+          q: `سؤال مدني متقدم ${i+1}`,
+          answers: ["الإجابة أ", "الإجابة ب", "الإجابة ج", "الإجابة د"],
+          correct: 0
+        }))
+      }
+    };
+
+    // ====== State ======
+    let selectedGrade = null, selectedSubject = null, selectedDifficulty = null;
+    let questions = [], currentQuestion = 0, score = 0;
+    let userAnswers = [], timerInterval = null, elapsedSeconds = 0;
+
+    // ====== Navigation ======
+    function showSection(id) {
+      document.querySelectorAll('.selection-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goBack(to) { showSection(to); }
+
+    // ====== Grade Selection ======
+    document.querySelectorAll('.grade-card').forEach(card => {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.grade-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedGrade = parseInt(this.dataset.grade);
+        loadSubjects(selectedGrade);
+        showSection('subjectSelection');
+      });
+    });
+
+    function loadSubjects(grade) {
+      const subjects = subjectsByGrade[grade] || [];
+      document.getElementById('subjectGrid').innerHTML = subjects.map(s => `
+        <div class="subject-card" data-subject="${s.id}">
+          <div class="subject-icon-display">${s.icon}</div>
+          <h4>${s.name}</h4>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.subject-card').forEach(card => {
+        card.addEventListener('click', function() {
+          selectedSubject = this.dataset.subject;
+          showSection('difficultySelection');
+        });
+      });
+    }
+
+    // ====== Difficulty Selection ======
+    document.querySelectorAll('.difficulty-card').forEach(card => {
+      card.addEventListener('click', function() {
+        selectedDifficulty = this.dataset.difficulty;
+        startQuiz();
+      });
+    });
+
+    // ====== Quiz Logic ======
+    const difficultyCount = { facile: 10, moyen: 15, difficile: 20 };
+    const difficultyNames = { facile: 'سهل', moyen: 'متوسط', difficile: 'صعب' };
+
+    function startQuiz() {
+      const bank = questionBank[selectedSubject]?.[selectedDifficulty] || [];
+      const count = difficultyCount[selectedDifficulty];
+      questions = [...bank].sort(() => Math.random() - 0.5).slice(0, count);
+
+      if (questions.length === 0) {
+        alert('لا توجد أسئلة لهذه المادة في الوقت الحالي. يرجى اختيار مادة أخرى.');
+        showSection('subjectSelection');
+        return;
+      }
+
+      currentQuestion = 0; score = 0; userAnswers = []; elapsedSeconds = 0;
+      document.getElementById('quizTitle').textContent = `${getSubjectName(selectedSubject)} - ${difficultyNames[selectedDifficulty]}`;
+      showSection('quizSection');
+      startTimer();
+      displayQuestion();
+    }
+
+    function getSubjectName(id) {
+      for (const subjects of Object.values(subjectsByGrade)) {
+        const s = subjects.find(s => s.id === id);
+        if (s) return s.name;
+      }
+      return id;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+        const s = String(elapsedSeconds % 60).padStart(2, '0');
+        document.getElementById('quizTimer').textContent = `⏱️ ${m}:${s}`;
+      }, 1000);
+    }
+
+    function displayQuestion() {
+      const q = questions[currentQuestion];
+      const total = questions.length;
+      document.getElementById('quizProgress').textContent = `السؤال ${currentQuestion + 1}/${total}`;
+      document.getElementById('progressBar').style.width = `${((currentQuestion) / total) * 100}%`;
+      document.getElementById('questionText').textContent = q.q;
+      document.getElementById('nextBtn').disabled = true;
+
+      document.getElementById('answersGrid').innerHTML = q.answers.map((a, i) => `
+        <button class="answer-btn" onclick="selectAnswer(${i})">${a}</button>
+      `).join('');
+    }
+
+    function selectAnswer(index) {
+      const q = questions[currentQuestion];
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(b => b.disabled = true);
+
+      userAnswers.push(index);
+
+      if (index === q.correct) {
+        buttons[index].classList.add('correct');
+        score++;
+      } else {
+        buttons[index].classList.add('wrong');
+        buttons[q.correct].classList.add('correct');
+      }
+
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        displayQuestion();
+      } else {
+        clearInterval(timerInterval);
+        showResults();
+      }
+    });
+
+    function showResults() {
+      const pct = Math.round((score / questions.length) * 100);
+      document.getElementById('scoreText').textContent = `${score}/${questions.length}`;
+      document.getElementById('scorePercentage').textContent = `${pct}%`;
+
+      let icon, title, msg;
+      if (pct >= 90) {
+        icon = '🏆'; title = 'ممتاز جداً!';
+        msg = `🌟 أداء رائع! حصلت على ${pct}% - أنت نجم حقيقي! استمر على هذا المستوى الرائع!`;
+      } else if (pct >= 75) {
+        icon = '🎉'; title = 'أحسنت!';
+        msg = `👏 عمل جيد جداً! حصلت على ${pct}%. مع قليل من المراجعة ستصل إلى القمة!`;
+      } else if (pct >= 50) {
+        icon = '💪'; title = 'جيد، لكن يمكنك الأفضل!';
+        msg = `📚 حصلت على ${pct}%. لا بأس! راجع دروسك وحاول مرة أخرى. أنت قادر على أكثر من هذا!`;
+      } else {
+        icon = '📖'; title = 'استمر في المراجعة!';
+        msg = `🌱 حصلت على ${pct}%. لا تيأس! كل محاولة تجعلك أقوى. راجع دروسك وعد للمحاولة مرة أخرى!`;
+      }
+
+      document.getElementById('resultsIcon').textContent = icon;
+      document.getElementById('resultsTitle').textContent = title;
+      document.getElementById('resultsMessage').textContent = msg;
+      document.getElementById('progressBar').style.width = '100%';
+      showSection('resultsSection');
+    }
+
+    function showCorrection() {
+      const content = questions.map((q, i) => {
+        const userAns = userAnswers[i];
+        const isCorrect = userAns === q.correct;
+        return `
+          <div class="correction-item ${isCorrect ? 'correct' : 'wrong'}">
+            <div class="question-num">السؤال ${i + 1} ${isCorrect ? '✅' : '❌'}</div>
+            <div class="question-text">${q.q}</div>
+            <div class="your-answer">إجابتك: <strong>${q.answers[userAns] || 'لم تُجب'}</strong></div>
+            ${!isCorrect ? `<div class="correct-answer">الإجابة الصحيحة: ✅ ${q.answers[q.correct]}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+      document.getElementById('correctionContent').innerHTML = content;
+      showSection('correctionSection');
+    }
+
+    function restartQuiz() { startQuiz(); }
+    function goToSelection() { showSection('gradeSelection'); }
+  </script>
+  <script src="auth.js"></script>
+</body>
+</html>

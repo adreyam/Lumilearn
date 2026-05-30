@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programme Scolaire - LumiLearn</title>
+    <link rel="stylesheet" href="styleSIGHT.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Curriculum specific styles */
+    .curriculum-hero {
+      background: linear-gradient(135deg, #FFE5F1 0%, #E0F7FF 100%);
+      padding: 60px 5%;
+      text-align: center;
+    }
+
+    .curriculum-hero h2 {
+      font-size: 2.5em;
+      color: var(--color-primary);
+      margin-bottom: 15px;
+      font-weight: 800;
+    }
+
+    .curriculum-hero p {
+      font-size: 1.2em;
+      color: var(--color-text);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .curriculum-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 5%;
+    }
+
+    /* Grade Tabs */
+    .grade-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+
+    .grade-tab {
+      background: white;
+      border: 3px solid var(--color-primary);
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1em;
+      color: var(--color-text);
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .grade-tab:hover {
+      background: var(--color-primary);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .grade-tab.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: white;
+      transform: scale(1.05);
+    }
+
+    /* Grade Content */
+    .grade-content {
+      display: none;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .grade-content.active {
+      display: block;
+    }
+
+    .grade-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .grade-header h3 {
+      font-size: 2em;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .grade-header p {
+      font-size: 1.1em;
+      color: #666;
+    }
+
+    /* Subjects Grid */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .subject-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .subject-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border-color: var(--color-primary);
+    }
+
+    .subject-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .subject-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      flex-shrink: 0;
+    }
+
+    .subject-icon.math { background: linear-gradient(135deg, #FFD36E, #FFA500); }
+    .subject-icon.language { background: linear-gradient(135deg, #FF91AF, #FF6B9D); }
+    .subject-icon.science { background: linear-gradient(135deg, #6ED3CF, #4ECDC4); }
+    .subject-icon.french { background: linear-gradient(135deg, #B99BFF, #9B7FE8); }
+    .subject-icon.history { background: linear-gradient(135deg, #A8E6CF, #74C365); }
+    .subject-icon.islamic { background: linear-gradient(135deg, #FFE5B4, #FFD700); }
+    .subject-icon.civic { background: linear-gradient(135deg, #FFB6C1, #FF69B4); }
+    .subject-icon.geography { background: linear-gradient(135deg, #87CEEB, #4682B4); }
+
+    .subject-title h4 {
+      font-size: 1.5em;
+      color: var(--color-text);
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .topic-count {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    .topics-list {
+      list-style: none;
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+
+    .subject-card.expanded .topics-list {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 15px;
+    }
+
+    .topics-list li {
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFF8F0, #FFE5F1);
+      border-radius: 10px;
+      border-left: 4px solid var(--color-primary);
+      font-size: 0.95em;
+      transition: all 0.2s ease;
+    }
+
+    .topics-list li:hover {
+      background: linear-gradient(135deg, #FFE5F1, #E0F7FF);
+      transform: translateX(5px);
+    }
+
+    .expand-icon {
+      float: right;
+      transition: transform 0.3s ease;
+      color: var(--color-primary);
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .subject-card.expanded .expand-icon {
+      transform: rotate(45deg);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .curriculum-hero h2 {
+        font-size: 1.8em;
+      }
+
+      .grade-tabs {
+        gap: 10px;
+      }
+
+      .grade-tab {
+        padding: 12px 20px;
+        font-size: 1em;
+      }
+
+      .subjects-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .subject-header {
+        gap: 10px;
+      }
+
+      .subject-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+      }
+
+      .subject-title h4 {
+        font-size: 1.2em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ============ Header ============ -->
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+
+    <!-- Navigation Desktop -->
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_fr_fr.html">🏠 Accueil</a>
+      <a href="audio.html">🎧 Livres Audio</a>
+      <a href="articles.html">📚 Articles</a>
+      <a href="curriculum.html">🎓 Programme</a>
+      <a href="wikipedia.html">🌐 Wikipedia</a>
+      <a href="favoris.html">❤️ Favoris</a>
+      <a href="quiz.html">🧠 Quiz</a>
+      <a href="jeux_fr.html">🎮 Educational Games</a>
+      <a href="apropos.html">💡 À Propos</a>
+      <a href="contact.html">📩 Contact</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>      
+      
+      <select id="langSelect" class="lang-select">
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="ar">🇸🇦 AR</option>
+      </select>
+    </nav>
+
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <!-- ============ Menu Mobile ============ -->
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_fr.html">🏠 Accueil</a>
+    <a href="audio.html">🎧 Livres Audio</a>
+    <a href="articles.html">📚 Articles</a>
+    <a href="curriculum.html">🎓 Programme</a>
+    <a href="wikipedia.html">🌐 Wikipedia</a>
+    <a href="favoris.html">❤️ Favoris</a>
+    <a href="quiz.html">🧠 Quiz</a>
+    <a href="jeux_fr.html">🎮 Educational Games</a>
+    <a href="apropos.html">💡 À Propos</a>
+    <a href="contact.html">📩 Contact</a>
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>      
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+  </nav>
+
+  <!-- ============ Hero Section ============ -->
+  <section class="curriculum-hero">
+    <div class="hero-content">
+      <h2>Programme Scolaire Tunisien 🎓</h2>
+      <p>
+        Découvre les leçons organisées par niveau scolaire. De la 1ère année à la 6ème année,
+        trouve exactement ce dont tu as besoin pour apprendre ! 📖✨
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ Curriculum Content ============ -->
+  <div class="curriculum-container">
+    <!-- Grade Tabs -->
+    <div class="grade-tabs">
+      <div class="grade-tab active" data-grade="1">1ère Année</div>
+      <div class="grade-tab" data-grade="2">2ème Année</div>
+      <div class="grade-tab" data-grade="3">3ème Année</div>
+      <div class="grade-tab" data-grade="4">4ème Année</div>
+      <div class="grade-tab" data-grade="5">5ème Année</div>
+      <div class="grade-tab" data-grade="6">6ème Année</div>
+    </div>
+
+    <!-- Grade 1 Content -->
+    <div class="grade-content active" data-grade="1">
+      <div class="grade-header">
+        <h3>Programme de 1ère Année 📚</h3>
+        <p>Découvre les bases essentielles pour bien commencer ton parcours scolaire</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📊 Les nombres de 1 à 100</li>
+            <li>➕ Addition simple</li>
+            <li>➖ Soustraction simple</li>
+            <li>🔷 Les formes géométriques</li>
+            <li>🎨 Les motifs et séquences</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+              <p class="topic-count">7 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 Textes argumentatifs</li>
+            <li>✍️ Production avancée</li>
+            <li>📝 Analyse grammaticale</li>
+            <li>🎭 Littérature arabe</li>
+            <li>💭 Vocabulaire spécialisé</li>
+            <li>📖 Critique littéraire</li>
+            <li>🗣️ Débat et argumentation</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">7 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Textes littéraires variés</li>
+            <li>✏️ Orthographe grammaticale</li>
+            <li>📝 Modes et temps verbaux</li>
+            <li>💬 Dissertation</li>
+            <li>📚 Analyse d'œuvres</li>
+            <li>🗣️ Présentation orale</li>
+            <li>✍️ Écriture créative</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Sciences</h4>
+              <p class="topic-count">7 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔬 Mélanges et solutions</li>
+            <li>⚡ Circuits électriques</li>
+            <li>🌱 Reproduction des plantes</li>
+            <li>🫁 Système respiratoire</li>
+            <li>🌍 Changements climatiques</li>
+            <li>🌌 L'univers</li>
+            <li>🔄 Cycles naturels</li>
+          </ul>
+        </div>
+
+        <!-- History -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon history">🏛️</div>
+            <div class="subject-title">
+              <h4>Histoire</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏛️ Civilisations méditerranéennes</li>
+            <li>🕌 L'Islam et son expansion</li>
+            <li>🇹🇳 Tunisie à travers l'histoire</li>
+            <li>🏰 Le Moyen Âge</li>
+            <li>🌍 Grandes découvertes</li>
+          </ul>
+        </div>
+
+        <!-- Geography -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon geography">🗺️</div>
+            <div class="subject-title">
+              <h4>Géographie</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🇹🇳 Régions de Tunisie</li>
+            <li>💧 Ressources en eau</li>
+            <li>🏭 Agriculture et industrie</li>
+            <li>🌍 Pays du Maghreb</li>
+            <li>🌆 Urbanisation</li>
+          </ul>
+        </div>
+
+        <!-- Civic Education -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon civic">🤝</div>
+            <div class="subject-title">
+              <h4>Éducation Civique</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏛️ Les institutions</li>
+            <li>⚖️ Droits et devoirs</li>
+            <li>🤝 Vie en société</li>
+            <li>🌍 Citoyenneté</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 6 Content -->
+    <div class="grade-content" data-grade="6">
+      <div class="grade-header">
+        <h3>Programme de 6ème Année 📚</h3>
+        <p>Dernière année du primaire - Prépare ton examen de fin d'études</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">10 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 Nombres relatifs</li>
+            <li>➗ Opérations complexes</li>
+            <li>📊 Statistiques</li>
+            <li>📐 Géométrie dans l'espace</li>
+            <li>📏 Théorème de Pythagore</li>
+            <li>🔄 Échelles et proportions</li>
+            <li>📈 Fonctions linéaires</li>
+            <li>🔷 Transformations géométriques</li>
+            <li>💰 Problèmes financiers</li>
+            <li>🧮 Problèmes de synthèse</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+              <p class="topic-count">8 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 Genres littéraires</li>
+            <li>✍️ Rédaction complète</li>
+            <li>📝 Grammaire avancée</li>
+            <li>🎭 Poésie arabe</li>
+            <li>💭 Rhétorique</li>
+            <li>📖 Commentaire de texte</li>
+            <li>🗣️ Expression orale soutenue</li>
+            <li>📋 Préparation à l'examen</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">8 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Œuvres intégrales</li>
+            <li>✏️ Orthographe complexe</li>
+            <li>📝 Grammaire complète</li>
+            <li>💬 Texte argumentatif</li>
+            <li>📚 Commentaire composé</li>
+            <li>🗣️ Oral structuré</li>
+            <li>✍️ Différents types d'écrits</li>
+            <li>📋 Révisions examen</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Sciences</h4>
+              <p class="topic-count">8 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔬 Réactions chimiques</li>
+            <li>⚡ Énergie électrique</li>
+            <li>🌱 Génétique et hérédité</li>
+            <li>🧬 Système nerveux</li>
+            <li>🌍 Protection de l'environnement</li>
+            <li>🌌 Conquête spatiale</li>
+            <li>🔄 Énergies renouvelables</li>
+            <li>🧪 Démarche scientifique</li>
+          </ul>
+        </div>
+
+        <!-- History -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon history">🏛️</div>
+            <div class="subject-title">
+              <h4>Histoire</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏛️ Les temps modernes</li>
+            <li>🕌 Empire ottoman en Tunisie</li>
+            <li>🇫🇷 Protectorat français</li>
+            <li>✊ Mouvement national</li>
+            <li>🇹🇳 Indépendance de la Tunisie</li>
+            <li>🌍 XXe siècle</li>
+          </ul>
+        </div>
+
+        <!-- Geography -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon geography">🗺️</div>
+            <div class="subject-title">
+              <h4>Géographie</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🇹🇳 Économie tunisienne</li>
+            <li>💧 Problèmes environnementaux</li>
+            <li>🏭 Développement durable</li>
+            <li>🌍 Le monde arabe</li>
+            <li>🌐 Mondialisation</li>
+            <li>🗺️ Enjeux géopolitiques</li>
+          </ul>
+        </div>
+
+        <!-- Civic Education -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon civic">🤝</div>
+            <div class="subject-title">
+              <h4>Éducation Civique</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏛️ Constitution tunisienne</li>
+            <li>⚖️ Droits de l'homme</li>
+            <li>🗳️ Démocratie</li>
+            <li>🤝 Solidarité sociale</li>
+            <li>🌍 Citoyenneté mondiale</li>
+          </ul>
+        </div>
+
+        <!-- Islamic Education -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon islamic">📿</div>
+            <div class="subject-title">
+              <h4>Éducation Islamique</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Mémorisation coranique</li>
+            <li>🕌 Pratiques religieuses</li>
+            <li>🤲 Valeurs islamiques</li>
+            <li>📿 Vie du Prophète</li>
+            <li>💫 Éthique et morale</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>🌟 LumiLearn</h4>
+        <p>Une plateforme éducative pour aider les enfants à apprendre en s'amusant.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Plan du Site</h4>
+        <ul>
+          <li><a href="indexSIGHT_fr.html">🏠 Accueil</a></li>
+          <li><a href="audio.html">🎧 Livres Audio</a></li>
+          <li><a href="articles.html">📚 Articles</a></li>
+          <li><a href="curriculum.html">🎓 Programme</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Ressources</h4>
+        <ul>
+          <li><a href="wikipedia.html">🌐 Wikipedia</a></li>
+          <li><a href="quiz.html">🧠 Quiz</a></li>
+          <li><a href="apropos.html">💡 À Propos</a></li>
+          <li><a href="contact.html">📩 Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Langues</h4>
+        <ul>
+          <li>🇫🇷 Français</li>
+          <li>🇬🇧 English</li>
+          <li>🇸🇦 العربية</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2025 LumiLearn | Projet IEEE ENSIT CS × SIGHT Group 🌟</p>
+    </div>
+  </footer>
+
+  <!-- ============ JavaScript ============ -->
+  <script>
+    // Menu mobile toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('is-open');
+    });
+
+    // Grade tabs functionality
+    const gradeTabs = document.querySelectorAll('.grade-tab');
+    const gradeContents = document.querySelectorAll('.grade-content');
+
+    gradeTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const gradeNum = tab.dataset.grade;
+        
+        // Remove active class from all tabs and contents
+        gradeTabs.forEach(t => t.classList.remove('active'));
+        gradeContents.forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        document.querySelector(`.grade-content[data-grade="${gradeNum}"]`).classList.add('active');
+        
+        // Close mobile menu if open
+        mobileNav.classList.remove('is-open');
+        
+        // Scroll to content
+        document.querySelector('.curriculum-container').scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
+    });
+
+    // Subject card expand/collapse
+    const subjectCards = document.querySelectorAll('.subject-card');
+
+    subjectCards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Toggle expanded class
+        card.classList.toggle('expanded');
+      });
+    });
+
+    // Language selector
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+
+    function changeLanguage(lang) {
+      console.log('Langue changée:', lang);
+      alert(`Langue changée: ${lang}\n\nCette fonctionnalité sera implémentée prochainement ! 🌐`);
+    }
+
+    langSelect.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelectMobile.value = e.target.value;
+    });
+
+    langSelectMobile.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelect.value = e.target.value;
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth'
+          });
+          mobileNav.classList.remove('is-open');
+        }
+      });
+    });
+  </script>
+</body>
+</html><p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔤 L'alphabet arabe</li>
+            <li>📚 Lecture de mots simples</li>
+            <li>✍️ Phrases de base</li>
+            <li>🗣️ Expression orale</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔤 L'alphabet français</li>
+            <li>📖 Lecture de syllabes</li>
+            <li>✏️ Écriture des lettres</li>
+            <li>🗨️ Vocabulaire de base</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Éveil Scientifique</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🐾 Les animaux</li>
+            <li>🌱 Les plantes</li>
+            <li>🌤️ La météo</li>
+            <li>👁️ Mon corps</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 2 Content -->
+    <div class="grade-content" data-grade="2">
+      <div class="grade-header">
+        <h3>Programme de 2ème Année 📚</h3>
+        <p>Développe tes connaissances et compétences</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 Les nombres jusqu'à 1000</li>
+            <li>➕ Addition avec retenue</li>
+            <li>➖ Soustraction avec retenue</li>
+            <li>✖️ Introduction à la multiplication</li>
+            <li>📏 Mesures simples</li>
+            <li>🕐 Lire l'heure</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 Lecture de textes courts</li>
+            <li>✍️ Expression écrite simple</li>
+            <li>📝 Grammaire de base</li>
+            <li>🎭 Compréhension de texte</li>
+            <li>🗣️ Communication orale</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Lecture de phrases</li>
+            <li>✏️ Dictée de mots</li>
+            <li>📝 Les sons complexes</li>
+            <li>💬 Vocabulaire enrichi</li>
+            <li>📚 Petits textes</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Éveil Scientifique</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🌍 L'environnement</li>
+            <li>💧 L'eau et ses états</li>
+            <li>🦷 Hygiène et santé</li>
+            <li>🌳 Les êtres vivants</li>
+            <li>☀️ Le jour et la nuit</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 3 Content -->
+    <div class="grade-content" data-grade="3">
+      <div class="grade-header">
+        <h3>Programme de 3ème Année 📚</h3>
+        <p>Approfondis tes apprentissages fondamentaux</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">7 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 Les grands nombres</li>
+            <li>✖️ Tables de multiplication</li>
+            <li>➗ Introduction à la division</li>
+            <li>🔷 Géométrie : droites et angles</li>
+            <li>📊 Problèmes mathématiques</li>
+            <li>💰 La monnaie</li>
+            <li>📏 Périmètre et surface</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 Textes littéraires</li>
+            <li>✍️ Production écrite</li>
+            <li>📖 Lecture expressive</li>
+            <li>📝 Conjugaison</li>
+            <li>🎭 Analyse de texte</li>
+            <li>💭 Vocabulaire thématique</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Lecture de textes variés</li>
+            <li>✏️ Orthographe et grammaire</li>
+            <li>📝 Le verbe et ses temps</li>
+            <li>💬 Expression écrite</li>
+            <li>📚 Compréhension de lecture</li>
+            <li>🗣️ Communication orale</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Éveil Scientifique</h4>
+              <p class="topic-count">5 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🌱 La croissance des plantes</li>
+            <li>⚡ L'énergie</li>
+            <li>🧲 Magnétisme</li>
+            <li>🦴 Le corps humain</li>
+            <li>🌎 La Terre et l'espace</li>
+          </ul>
+        </div>
+
+        <!-- Islamic Education -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon islamic">📿</div>
+            <div class="subject-title">
+              <h4>Éducation Islamique</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Sourates du Coran</li>
+            <li>🕌 Les piliers de l'Islam</li>
+            <li>🤲 Les bonnes manières</li>
+            <li>📿 Histoires des prophètes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 4 Content -->
+    <div class="grade-content" data-grade="4">
+      <div class="grade-header">
+        <h3>Programme de 4ème Année 📚</h3>
+        <p>Élargis tes horizons et explore de nouveaux domaines</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">8 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 Les nombres décimaux</li>
+            <li>✖️ Multiplication à 2 chiffres</li>
+            <li>➗ Division euclidienne</li>
+            <li>📐 Triangles et quadrilatères</li>
+            <li>📊 Graphiques et tableaux</li>
+            <li>➗ Les fractions</li>
+            <li>📏 Calcul d'aires</li>
+            <li>🔄 Proportionnalité</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📚 Textes narratifs</li>
+            <li>✍️ Rédaction structurée</li>
+            <li>📝 Syntaxe et analyse</li>
+            <li>🎭 Étude d'œuvres</li>
+            <li>💭 Enrichissement lexical</li>
+            <li>📖 Lecture critique</li>
+          </ul>
+        </div>
+
+        <!-- French -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon french">🇫🇷</div>
+            <div class="subject-title">
+              <h4>Français</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>📖 Textes descriptifs</li>
+            <li>✏️ Orthographe avancée</li>
+            <li>📝 Conjugaison complète</li>
+            <li>💬 Rédaction de textes</li>
+            <li>📚 Analyse littéraire</li>
+            <li>🗣️ Expression argumentée</li>
+          </ul>
+        </div>
+
+        <!-- Science -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon science">🔬</div>
+            <div class="subject-title">
+              <h4>Sciences</h4>
+              <p class="topic-count">6 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔬 La matière et ses états</li>
+            <li>⚡ Électricité</li>
+            <li>🌱 Nutrition des plantes</li>
+            <li>🫀 Circulation sanguine</li>
+            <li>🌍 Écosystèmes</li>
+            <li>🌙 Système solaire</li>
+          </ul>
+        </div>
+
+        <!-- History -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon history">🏛️</div>
+            <div class="subject-title">
+              <h4>Histoire</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🏺 La préhistoire</li>
+            <li>🏛️ Les civilisations anciennes</li>
+            <li>🕌 Histoire de la Tunisie</li>
+            <li>⏳ La mesure du temps</li>
+          </ul>
+        </div>
+
+        <!-- Geography -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon geography">🗺️</div>
+            <div class="subject-title">
+              <h4>Géographie</h4>
+              <p class="topic-count">4 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🗺️ Cartes et plans</li>
+            <li>🇹🇳 La Tunisie : régions</li>
+            <li>🌍 Continents et océans</li>
+            <li>🏔️ Relief et paysages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 5 Content -->
+    <div class="grade-content" data-grade="5">
+      <div class="grade-header">
+        <h3>Programme de 5ème Année 📚</h3>
+        <p>Prépare-toi pour le passage au collège</p>
+      </div>
+
+      <div class="subjects-grid">
+        <!-- Math -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon math">🔢</div>
+            <div class="subject-title">
+              <h4>Mathématiques</h4>
+              <p class="topic-count">9 thèmes</p>
+            </div>
+            <span class="expand-icon">+</span>
+          </div>
+          <ul class="topics-list">
+            <li>🔢 Opérations sur les décimaux</li>
+            <li>➗ Fractions et opérations</li>
+            <li>📊 Pourcentages</li>
+            <li>📐 Périmètre et aire</li>
+            <li>📦 Volume</li>
+            <li>🔄 Vitesse et durée</li>
+            <li>📈 Proportionnalité avancée</li>
+            <li>🔷 Symétrie</li>
+            <li>🧮 Résolution de problèmes</li>
+          </ul>
+        </div>
+
+        <!-- Arabic -->
+        <div class="subject-card">
+          <div class="subject-header">
+            <div class="subject-icon language">📖</div>
+            <div class="subject-title">
+              <h4>Langue Arabe</h4>
+
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <script src="auth.js"></script>
+    </body>

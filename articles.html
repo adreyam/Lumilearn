@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiLearn : Articles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleSIGHT.css" />
+  <link rel="stylesheet" href="search-styles.css" />
+  
+  <style>
+    .article-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform .3s;
+    }
+
+    .article-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .article-card p {
+      color: #555;
+      font-size: 0.95em;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .article-card a {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .article-card a:hover {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      transform: scale(1.05);
+    }
+    
+    .article-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; 
+      height: 100%;
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      position: relative; /* ✅ Pour les boutons favoris */
+    }
+
+    .article-card h3 {
+      margin: 10px 0;
+    }
+
+    .article-card p {
+      flex-grow: 1; 
+    }
+    
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 850px) {
+      .resources-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .resources-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ============ Header ============ -->
+  <header class="main-header">
+    <h1>🌟 LumiLearn</h1>
+
+    <!-- Navigation Desktop -->
+    <nav class="desktop-nav">
+      <a href="indexSIGHT_fr.html">🏠 Accueil</a>
+      <a href="audio.html">🎧 Livres Audio</a>
+      <a href="articles.html">📚 Articles</a>
+      <a href="curriculum.html">🎓 Programme</a>
+      <a href="wikipedia.html">🌐 Wikipedia</a>
+      <a href="favoris.html">❤️ Favoris</a>
+      <a href="quiz.html">🧠 Quiz</a>
+      <a href="jeux_en.html">🎮 Educational Games</a>
+      <a href="apropos.html">💡 À Propos</a>
+      <a href="contact.html">📩 Contact</a>
+      <!-- ✅ MODIFIÉ : Utilise openAuthModal -->
+      <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>
+      
+      <!-- Sélecteur de langue -->
+      <select id="langSelect" class="lang-select">
+        <option value="fr">🇫🇷 FR</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="ar">🇸🇦 AR</option>
+      </select>
+    </nav>
+
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </header>
+
+  <!-- ============ Menu Mobile ============ -->
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="indexSIGHT_fr.html">🏠 Accueil</a>
+    <a href="audio.html">🎧 Livres Audio</a>
+    <a href="articles.html">📚 Articles</a>
+    <a href="curriculum.html">🎓 Programme</a>
+    <a href="wikipedia.html">🌐 Wikipedia</a>
+    <a href="favoris.html">❤️ Favoris</a>
+    <a href="quiz.html">🧠 Quiz</a>
+    <a href="jeux_en.html">🎮 Educational Games</a>
+    <a href="apropos.html">💡 À Propos</a>
+    <a href="contact.html">📩 Contact</a>
+    <!-- ✅ MODIFIÉ -->
+    <a href="#" class="login-btn" onclick="openAuthModal(event)">👤 Connexion</a>
+    <div class="lang-select-mobile">
+      🌐
+      <select id="langSelectMobile">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+  </nav>
+
+  <!-- ============ Search Section ============ -->
+  <section class="search-section">
+    <div class="search-content">
+      <h3>Rechercher un article 📖</h3>
+      <div class="search-bar">
+        <input id="searchInput" type="text" placeholder="Tape le titre d'un article..." />
+        <button id="searchButton">Rechercher</button>
+      </div>
+    </div>
+    <div class="search-illustration">
+      <div class="illustration-placeholder">📰</div>
+    </div>
+    
+    <!-- ✅ NOUVEAU : Container pour les résultats -->
+    <div id="searchResults"></div>
+  </section>
+
+  <!-- ============ Articles Section ============ -->
+  <div class="container">
+    <div class="home-intro">
+      <h2>📚 Articles Éducatifs</h2>
+      <p class="section-subtitle">Lis, découvre et apprends de nouveaux sujets passionnants !</p>
+    </div>
+
+    <!-- ✅ Les boutons favoris seront ajoutés AUTOMATIQUEMENT -->
+    <div id="articlesGrid" class="resources-grid">
+      <!-- Filled by JavaScript -->
+    </div>
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>🌟 LumiLearn</h4>
+        <p>Une plateforme éducative pour aider les enfants à apprendre en s'amusant.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Plan du Site</h4>
+        <ul>
+          <li><a href="indexSIGHT_fr.html">🏠 Accueil</a></li>
+          <li><a href="audio.html">🎧 Livres Audio</a></li>
+          <li><a href="articles.html">📚 Articles</a></li>
+          <li><a href="curriculum.html">🎓 Programme</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Ressources</h4>
+        <ul>
+          <li><a href="wikipedia.html">🌐 Wikipedia</a></li>
+          <li><a href="quiz.html">🧠 Quiz</a></li>
+          <li><a href="apropos.html">💡 À Propos</a></li>
+          <li><a href="contact.html">📩 Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Langues</h4>
+        <ul>
+          <li>🇫🇷 Français</li>
+          <li>🇬🇧 English</li>
+          <li>🇸🇦 العربية</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2025 LumiLearn | Projet IEEE ENSIT CS × SIGHT Group 🌟</p>
+    </div>
+  </footer>
+
+  <!-- ============ JavaScript ============ -->
+  <script>
+    // Menu mobile toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('is-open');
+    });
+
+    // Language selector
+    const langSelect = document.getElementById('langSelect');
+    const langSelectMobile = document.getElementById('langSelectMobile');
+
+    function changeLanguage(lang) {
+      console.log('Langue changée:', lang);
+      alert(`Langue changée: ${lang}\n\nCette fonctionnalité sera implémentée prochainement ! 🌐`);
+    }
+
+    langSelect.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelectMobile.value = e.target.value;
+    });
+
+    langSelectMobile.addEventListener('change', (e) => {
+      changeLanguage(e.target.value);
+      langSelect.value = e.target.value;
+    });
+
+    // ===== Articles Data =====
+    const articles = [
+      {
+        title: "La Lune : Notre satellite naturel",
+        desc: "Découvre les phases de la Lune et son influence sur la Terre.",
+        img: "Images/lune.jpg",
+        link: "https://fr.wikipedia.org/wiki/Lune"
+      },
+      {
+        title: "Les océans du monde",
+        desc: "Les océans recouvrent plus de 70 % de la surface de la Terre.",
+        img: "Images/oceans.webp",
+        link: "https://fr.wikipedia.org/wiki/Oc%C3%A9an"
+      },
+      {
+        title: "L'énergie solaire",
+        desc: "Apprends comment le Soleil fournit une énergie propre et renouvelable.",
+        img: "Images/EngSol.jpeg",
+        link: "https://fr.wikipedia.org/wiki/%C3%89nergie_solaire"
+      },
+      {
+        title: "Les dinosaures",
+        desc: "Plonge dans l'ère des géants qui ont dominé la Terre pendant des millions d'années.",
+        img: "Images/dinos.webp",
+        link: "https://fr.wikipedia.org/wiki/Dinosaure"
+      },
+      {
+        title: "L'intelligence artificielle",
+        desc: "Découvre comment les ordinateurs apprennent à résoudre des problèmes complexes.",
+        img: "Images/ia.jpg",
+        link: "https://fr.wikipedia.org/wiki/Intelligence_artificielle"
+      },
+      {
+        title: "Les volcans actifs",
+        desc: "Explore les volcans les plus puissants et leur rôle dans la formation de notre planète.",
+        img: "Images/volcan.jpg",
+        link: "https://fr.wikipedia.org/wiki/Volcan"
+      }
+    ];
+
+    const grid = document.getElementById("articlesGrid");
+
+    // ===== Render Cards =====
+    function renderArticles(list) {
+      grid.innerHTML = list.map(article => `
+        <div class="resource-card article-card">
+          <img src="${article.img}" alt="${article.title}">
+          <h3>${article.title}</h3>
+          <p>${article.desc}</p>
+          <a href="${article.link}" target="_blank" rel="noopener noreferrer">Lire la suite</a>
+        </div>
+      `).join('');
+      
+      // ✅ Les boutons favoris seront ajoutés automatiquement par favorites.js
+    }
+
+    // ❌ SUPPRIMÉ : searchArticles() pour la recherche globale
+    // La recherche locale reste pour filtrer les cartes affichées
+    function searchArticles() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = articles.filter(a => a.title.toLowerCase().includes(query));
+      renderArticles(filtered.length ? filtered : articles);
+    }
+
+    // Garder la recherche locale pour filtrer les cartes
+    const localSearchBtn = document.getElementById("searchButton");
+    const localSearchInput = document.getElementById("searchInput");
+    
+    if (localSearchBtn && localSearchInput) {
+      localSearchBtn.addEventListener("click", searchArticles);
+      localSearchInput.addEventListener("keyup", e => { 
+        if (e.key === "Enter") searchArticles(); 
+      });
+    }
+
+    // Initial render
+    renderArticles(articles);
+  </script>
+  
+  <!-- ✅ NOUVEAU : Scripts dans l'ordre correct -->
+  <script src="auth.js"></script>
+  <script src="favorites.js"></script>
+  <script src="search.js"></script>
+</body>
+</html>
