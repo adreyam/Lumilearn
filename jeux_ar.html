@@ -136,6 +136,38 @@
     .desktop-nav {
       gap: 10px;
     }
+
+    .best-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-background);
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .game-card.math .best-score-badge {
+      border-color: var(--color-accent);
+      color: #2a857f;
+      background: #f0fffe;
+    }
+
+    .game-card.memory .best-score-badge {
+      border-color: var(--color-purple);
+      color: #6b4ec7;
+      background: #f5f0ff;
+    }
+
+    .best-score-badge .score-val {
+      font-size: 1rem;
+      font-weight: 800;
+    }
   </style>
 </head>
 
@@ -210,16 +242,19 @@
         <p class="game-desc">
           اجمع بين الأرقام والعمليات الحسابية للوصول إلى الرقم المستهدف! طريقة رائعة لتحدي وتطوير مهارات الحساب الذهني.
         </p>
+        <div class="best-score-badge">🏆 أفضل نتيجة: <span class="score-val" id="mathBestScore">—</span></div>
         <a href="jeux1_ar.html" class="play-btn">العب الآن</a>
       </div>
 
       <!-- Game 2: Memory Matching -->
       <div class="game-card memory" onclick="window.location.href='jeux2_ar.html'">
         <div class="game-icon-wrapper">🧠</div>
-        <h3 class="game-title">الذاكرة التعليمية</h3>
+        <h3 class="game-title">بطاقات الذاكرة</h3>
         <p class="game-desc">
           مرّن ذاكرتك ومهاراتك المعرفية عبر مطابقة أزواج من البطاقات (عمليات حسابية أو حيوانات لطيفة)!
         </p>
+        <div class="best-score-badge">🏆 أفضل نتيجة: <span class="score-val" id="memoryBestScore">—</span> حركة</div>
+        <div class="best-score-badge">⏱️ أفضل وقت: <span class="score-val" id="memoryBestTime">—</span></div>
         <a href="jeux2_ar.html" class="play-btn">العب الآن</a>
       </div>
     </div>
@@ -270,6 +305,28 @@
 
   <!-- ============ JavaScript ============ -->
   <script>
+    // تحميل أفضل النتائج من localStorage
+    function loadBestScores() {
+      const mathScore = localStorage.getItem('mathgame_score');
+      const memoryScore = localStorage.getItem('memory_best_score');
+      const memoryTime = localStorage.getItem('memory_best_time');
+
+      document.getElementById('mathBestScore').textContent =
+        (mathScore !== null && parseInt(mathScore) > 0) ? mathScore : '—';
+      document.getElementById('memoryBestScore').textContent =
+        memoryScore !== null ? memoryScore : '—';
+
+      if (memoryTime !== null) {
+        const mins = Math.floor(parseInt(memoryTime) / 60);
+        const secs = parseInt(memoryTime) % 60;
+        document.getElementById('memoryBestTime').textContent =
+          `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      } else {
+        document.getElementById('memoryBestTime').textContent = '—';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadBestScores);
+
     // القائمة في الهاتف
     const menuToggle = document.querySelector('.menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');

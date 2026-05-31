@@ -234,6 +234,7 @@ function handleVictory() {
     playSound("victory");
 
     const isNewRecord = saveBestScore(moves);
+    saveBestTime(secondsElapsed);
 
     finalTimeVal.textContent = timerVal.textContent;
     finalMovesVal.textContent = moves;
@@ -249,33 +250,48 @@ function handleVictory() {
     }, 500);
 }
 
-// LocalStorage Record
+// LocalStorage Record (Coups)
 function loadBestScore() {
-    const key = `memory_best_score`;
-    const best = localStorage.getItem(key);
-    if (best) {
-        bestScoreVal.textContent = best;
-    } else {
-        bestScoreVal.textContent = "-";
-    }
+    const best = localStorage.getItem('memory_best_score');
+    bestScoreVal.textContent = best ? best : '-';
 }
 
 function saveBestScore(currentMoves) {
-    const key = `memory_best_score`;
-    const best = localStorage.getItem(key);
-
+    const best = localStorage.getItem('memory_best_score');
     if (!best || currentMoves < parseInt(best)) {
-        localStorage.setItem(key, currentMoves);
+        localStorage.setItem('memory_best_score', currentMoves);
         loadBestScore();
         return true;
     }
     return false;
 }
 
+// LocalStorage Record (Temps)
+function loadBestTime() {
+    const best = localStorage.getItem('memory_best_time');
+    if (best) {
+        const mins = Math.floor(parseInt(best) / 60);
+        const secs = parseInt(best) % 60;
+        document.getElementById('bestTimeVal').textContent =
+            `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    } else {
+        document.getElementById('bestTimeVal').textContent = '-';
+    }
+}
+
+function saveBestTime(currentSeconds) {
+    const best = localStorage.getItem('memory_best_time');
+    if (!best || currentSeconds < parseInt(best)) {
+        localStorage.setItem('memory_best_time', currentSeconds);
+        loadBestTime();
+    }
+}
+
 function resetBestScore() {
-    const key = `memory_best_score`;
-    localStorage.removeItem(key);
+    localStorage.removeItem('memory_best_score');
+    localStorage.removeItem('memory_best_time');
     loadBestScore();
+    loadBestTime();
     playSound("click");
 }
 
@@ -285,4 +301,7 @@ resetBestBtn.addEventListener("click", resetBestScore);
 replayBtn.addEventListener("click", initGame);
 
 // Initialisation au chargement
-document.addEventListener("DOMContentLoaded", initGame);
+document.addEventListener("DOMContentLoaded", () => {
+    loadBestTime();
+    initGame();
+});
