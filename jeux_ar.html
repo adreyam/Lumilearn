@@ -69,6 +69,14 @@
       border-color: var(--color-purple);
     }
 
+    .game-card.units::before {
+      background: var(--color-green);
+    }
+
+    .game-card.units:hover {
+      border-color: var(--color-green);
+    }
+
     .game-icon-wrapper {
       width: 120px;
       height: 120px;
@@ -127,6 +135,11 @@
       box-shadow: 0 5px 15px rgba(185, 155, 255, 0.3);
     }
 
+    .game-card.units .play-btn {
+      background: linear-gradient(135deg, var(--color-green), var(--color-secondary));
+      box-shadow: 0 5px 15px rgba(116, 195, 101, 0.3);
+    }
+
     .play-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -162,6 +175,12 @@
       border-color: var(--color-purple);
       color: #6b4ec7;
       background: #f5f0ff;
+    }
+
+    .game-card.units .best-score-badge {
+      border-color: var(--color-green);
+      color: #2a7a5c;
+      background: #f0fff4;
     }
 
     .best-score-badge .score-val {
@@ -257,6 +276,17 @@
         <div class="best-score-badge">⏱️ أفضل وقت: <span class="score-val" id="memoryBestTime">—</span></div>
         <a href="jeux2_ar.html" class="play-btn">العب الآن</a>
       </div>
+
+      <!-- Game 3: Unit Conversion -->
+      <div class="game-card units" onclick="window.location.href='jeux4_ar.html'">
+        <div class="game-icon-wrapper">📐</div>
+        <h3 class="game-title">تحويل الوحدات</h3>
+        <p class="game-desc">
+          تحدّ نفسك في تحويل وحدات القياس المختلفة مثل المسافة، الوزن، والسرعة عبر مستويات متدرجة الصعوبة!
+        </p>
+        <div class="best-score-badge">🏆 أفضل نتيجة: <span class="score-val" id="unitsBestScore">—</span></div>
+        <a href="jeux4_ar.html" class="play-btn">العب الآن</a>
+      </div>
     </div>
   </main>
 
@@ -315,6 +345,10 @@
         (mathScore !== null && parseInt(mathScore) > 0) ? mathScore : '—';
       document.getElementById('memoryBestScore').textContent =
         memoryScore !== null ? memoryScore : '—';
+
+      const unitsScore = localStorage.getItem('units_best_score');
+      document.getElementById('unitsBestScore').textContent =
+        (unitsScore !== null && parseInt(unitsScore) > 0) ? unitsScore : '—';
 
       if (memoryTime !== null) {
         const mins = Math.floor(parseInt(memoryTime) / 60);
