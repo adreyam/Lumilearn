@@ -178,6 +178,52 @@
       font-size: 1rem;
       font-weight: 800;
     }
+
+    /* Game 4 : Arabic-only / locked card */
+    .game-card.verbs {
+      filter: grayscale(80%);
+      opacity: 0.70;
+      position: relative;
+      cursor: not-allowed;
+    }
+
+    .game-card.verbs::before {
+      background: #9e9e9e;
+    }
+
+    .game-card.verbs:hover {
+      transform: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border-color: transparent;
+    }
+
+    .game-card.verbs .play-btn {
+      background: linear-gradient(135deg, #9e9e9e, #757575);
+      box-shadow: none;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .game-card.verbs .best-score-badge {
+      border-color: #bdbdbd;
+      color: #777;
+      background: #f5f5f5;
+    }
+
+    .locked-badge {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: #f44336;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 50px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 3px 8px rgba(244,67,54,0.35);
+      z-index: 2;
+    }
   </style>
 </head>
 
@@ -279,6 +325,18 @@
         </p>
         <div class="best-score-badge">🏆 Meilleur Score : <span class="score-val" id="unitsBestScore">—</span></div>
         <a href="jeux4_fr.html" class="play-btn">Jouer Maintenant</a>
+      </div>
+
+      <!-- Game 4: Verb Conjugation (Arabic only) -->
+      <div class="game-card verbs">
+        <span class="locked-badge">❌ Arabe uniquement</span>
+        <div class="game-icon-wrapper">✍️</div>
+        <h3 class="game-title">Conjugaison des verbes</h3>
+        <p class="game-desc">
+          Apprends la conjugaison des verbes arabes au passé, présent et futur à travers des niveaux progressifs !
+        </p>
+        <div class="best-score-badge">🌐 Disponible en arabe uniquement</div>
+        <a class="play-btn" style="pointer-events: none;">Verrouillé</a>
       </div>
     </div>
   </main>
